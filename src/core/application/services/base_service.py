@@ -3,8 +3,8 @@ import logging
 from abc import ABC, abstractmethod
 from typing import List, Type, TypeVar
 
-from core.application.dtos.base import BaseRequest, BaseResponse
-from core.infrastructure.repositories.base_repository import BaseRepository
+from src.core.application.dtos.base import BaseRequest, BaseResponse
+from src.core.infrastructure.repositories.base_repository import BaseRepository
 
 CreateDTO = TypeVar("CreateDTO", bound=BaseRequest)
 UpdateDTO = TypeVar("UpdateDTO", bound=BaseRequest)

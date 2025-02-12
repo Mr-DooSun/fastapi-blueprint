@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from dependency_injector import containers, providers
 
-from core.application.services.base_service import BaseService
-from core.infrastructure.database.database import Database
-from core.infrastructure.repositories.base_repository import BaseRepository
+from src.core.application.services.base_service import BaseService
+from src.core.infrastructure.database.database import Database
+from src.core.infrastructure.repositories.base_repository import BaseRepository
 
 
 class CoreContainer(containers.DeclarativeContainer):

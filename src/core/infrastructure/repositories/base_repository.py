@@ -6,9 +6,9 @@ from typing import Callable, Generic, List, Type, TypeVar
 from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.application.dtos.base import BaseRequest
-from core.domain.entities.entity import Entity
-from core.infrastructure.database.database import Base
+from src.core.application.dtos.base import BaseRequest
+from src.core.domain.entities.entity import Entity
+from src.core.infrastructure.database.database import Base
 
 SessionFactory = Callable[..., AbstractAsyncContextManager[AsyncSession]]
 
