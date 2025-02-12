@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from dependency_injector import containers, providers
+from minio import Minio
 
 from src.core.application.services.base_service import BaseService
 from src.core.infrastructure.database.database import Database
+from src.core.infrastructure.messaging.rabbitmq_manager import RabbitMQManager
 from src.core.infrastructure.repositories.base_repository import BaseRepository
 
 
@@ -16,6 +18,20 @@ class CoreContainer(containers.DeclarativeContainer):
         database_host=config.database.host,
         database_port=config.database.port,
         database_name=config.database.name,
+    )
+
+    minio_client = providers.Singleton(
+        Minio,
+        endpoint=config.minio.endpoint,
+        access_key=config.minio.access_key,
+        secret_key=config.minio.secret_key,
+        secure=False,  # HTTPS가 아닌 경우 False 설정
+    )
+
+    rabbitmq_manager = providers.Singleton(
+        RabbitMQManager,
+        host=config.rabbitmq.host,
+        port=config.rabbitmq.port,
     )
 
     base_repository = providers.Singleton(
