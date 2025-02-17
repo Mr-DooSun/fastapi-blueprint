@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import importlib
 import os
+import pkgutil
+
+import src.core.infrastructure.database.models as models_module
 
 
 def create_folder_if_not_exists(folder_path: str):
@@ -13,10 +16,6 @@ def create_folder_if_not_exists(folder_path: str):
 
 
 def load_models():
-    import pkgutil
-
-    import src.core.infrastructure.database.models as models_module
-
     for _, module_name, _ in pkgutil.walk_packages(
         models_module.__path__, models_module.__name__ + "."
     ):

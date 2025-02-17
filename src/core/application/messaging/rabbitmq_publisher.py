@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
 import json
-from src.core.infrastructure.messaging.rabbitmq_manager import RabbitMQManager
 
 import pika
+
+from src.core.infrastructure.messaging.rabbitmq_manager import RabbitMQManager
+
 
 class RabbitMQPublisher:
     def __init__(self, rabbitmq_manager: RabbitMQManager):

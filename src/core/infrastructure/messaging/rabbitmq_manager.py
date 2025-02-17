@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # src/core/infrastructure/messaging/rabbitmq_manager.py
 import pika
 
