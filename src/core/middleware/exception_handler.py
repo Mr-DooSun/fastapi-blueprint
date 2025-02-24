@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import traceback
+
 from fastapi import Request
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -16,7 +18,12 @@ class ExceptionMiddleware(BaseHTTPMiddleware):
                 status_code=exc.status_code, content={"message": exc.message}
             )
         except Exception as exc:
+            error_trace = traceback.format_exc()
+            print(error_trace)
             return JSONResponse(
                 status_code=500,
-                content={"message": f"Internal server error: {str(exc)}"},
+                content={
+                    "message": f"Internal server error: {str(exc)}",
+                    "traceback": error_trace,
+                },
             )
