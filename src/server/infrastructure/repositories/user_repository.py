@@ -2,9 +2,7 @@
 from contextlib import AbstractAsyncContextManager
 from typing import Callable
 
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.sql import exists
 
 from src.core.domain.entities.user_entity import (
     CreateUserEntity,

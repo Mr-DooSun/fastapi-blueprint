@@ -1,18 +1,14 @@
 # -*- coding: utf-8 -*-
 
 
+from typing import List
+
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends
 
-from src.core.application.dtos.user_dto import (
-    CreateUserDto,
-    UpdateUserDto,
-    UserDto,
-)
+from src.core.application.dtos.user_dto import CreateUserDto, UpdateUserDto, UserDto
 from src.server.application.services.user_service import UserService
 from src.server.infrastructure.di.container import ServerContainer
-
-from typing import List
 
 router = APIRouter()
 
@@ -21,9 +17,7 @@ router = APIRouter()
 @inject
 async def create_user(
     create_data: CreateUserDto,
-    user_service: UserService = Depends(
-        Provide[ServerContainer.user_service]
-    ),
+    user_service: UserService = Depends(Provide[ServerContainer.user_service]),
 ) -> UserDto:
     return await user_service.create_data(create_data=create_data)
 

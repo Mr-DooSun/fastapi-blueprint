@@ -20,6 +20,7 @@ class CreateUserEntity(Entity):
     email: str
     full_name: str
 
+
 class UpdateUserEntity(Entity):
     username: str
     password: str
