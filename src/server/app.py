@@ -3,6 +3,7 @@ from fastapi import FastAPI
 
 from src.core.middleware.exception_handler import ExceptionMiddleware
 from src.server.application.controllers import health_check_controller
+from src.server.application.controllers import user_controller
 from src.server.infrastructure.di.container import ServerContainer
 
 container = None
@@ -25,6 +26,7 @@ def create_app():
     app.add_middleware(ExceptionMiddleware)
 
     app.include_router(router=health_check_controller.router)
+    app.include_router(router=user_controller.router)
 
     return app
 

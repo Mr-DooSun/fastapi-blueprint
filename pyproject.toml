@@ -6,7 +6,7 @@ authors = [
     {name = "Mr-DooSun",email = "mrdoosun@gmail.com"}
 ]
 readme = "README.md"
-requires-python = "3.12.8"
+requires-python = ">=3.12"
 dependencies = [
     "httpx (>=0.28.1,<0.29.0)",
     "fastapi (>=0.115.8,<0.116.0)",
@@ -25,4 +25,4 @@ dependencies = [
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.src.core.masonry.api"
+build-backend = "poetry.core.masonry.api"
