@@ -13,15 +13,12 @@ class UserService(BaseService):
 
     @property
     def create_dto(self):
-        """하위 클래스에서 DTO 생성 메서드 정의"""
         return CreateUserDto
 
     @property
     def response_dto(self):
-        """하위 클래스에서 반환 DTO 메서드 정의"""
         return UserDto
 
     @property
     def update_dto(self):
-        """하위 클래스에서 DTO 업데이트 메서드 정의"""
         return UpdateUserDto

@@ -49,7 +49,7 @@ class BaseRepository(ABC, Generic[CreateEntity, ReturnEntity, UpdateEntity]):
             await session.commit()
             await session.refresh(data)
 
-        return ReturnEntity(**vars(data))
+        return self.return_entity(**vars(data))
 
     async def create_datas(
         self, create_datas: List[CreateEntity]
@@ -70,7 +70,7 @@ class BaseRepository(ABC, Generic[CreateEntity, ReturnEntity, UpdateEntity]):
             result = await session.execute(
                 select(self.model).where(self.model.id.in_(inserted_ids))
             )
-            return [ReturnEntity(**vars(data)) for data in result.scalars().all()]
+            return [self.return_entity(**vars(data)) for data in result.scalars().all()]
 
     async def get_datas(self, page: int, page_size: int) -> List[ReturnEntity]:
         async with self.session() as session:
@@ -79,7 +79,7 @@ class BaseRepository(ABC, Generic[CreateEntity, ReturnEntity, UpdateEntity]):
             )
             datas = result.scalars().all()
 
-        return [ReturnEntity(**vars(data)) for data in datas]
+        return [self.return_entity(**vars(data)) for data in datas]
 
     async def get_data_by_data_id(self, data_id: int) -> ReturnEntity:
         async with self.session() as session:
@@ -88,7 +88,7 @@ class BaseRepository(ABC, Generic[CreateEntity, ReturnEntity, UpdateEntity]):
             )
             data = result.scalar_one_or_none()
 
-        return ReturnEntity(**vars(data)) if data else None
+        return self.return_entity(**vars(data)) if data else None
 
     async def get_datas_by_data_id(
         self, data_id: int, page: int, page_size: int
@@ -102,7 +102,7 @@ class BaseRepository(ABC, Generic[CreateEntity, ReturnEntity, UpdateEntity]):
             )
             datas = result.scalars().all()
 
-        return [ReturnEntity(**vars(data)) for data in datas]
+        return [self.return_entity(**vars(data)) for data in datas]
 
     async def update_data_by_data_id(
         self, data_id: int, update_data: UpdateEntity
@@ -121,7 +121,7 @@ class BaseRepository(ABC, Generic[CreateEntity, ReturnEntity, UpdateEntity]):
 
             await session.commit()
             await session.refresh(data)
-            return ReturnEntity(**vars(data))
+            return self.return_entity(**vars(data))
 
     async def delete_data_by_data_id(self, data_id: int) -> None:
         async with self.session() as session:

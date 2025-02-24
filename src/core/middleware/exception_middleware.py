@@ -23,7 +23,7 @@ class ExceptionMiddleware(BaseHTTPMiddleware):
             return JSONResponse(
                 status_code=500,
                 content={
+                    "success": False,
                     "message": f"Internal server error: {str(exc)}",
-                    "traceback": error_trace,
                 },
             )
