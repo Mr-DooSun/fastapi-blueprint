@@ -59,4 +59,4 @@ class Database:
                 await session.rollback()
                 raise HTTPException(status_code=500, detail="Internal server error")
             finally:
-                await session.remove()
+                await session.close()
