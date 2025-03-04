@@ -44,6 +44,7 @@ class CoreContainer(containers.DeclarativeContainer):
         database=database,
     )
 
+    # 만약, 상태를 공유하는 비즈니스 로직일 경우에는, Factory가 아니라 Singleton으로 생성하는게 좋다
     base_service = providers.Factory(
         BaseService,
         base_repository=base_repository,

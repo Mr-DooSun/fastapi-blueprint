@@ -10,7 +10,7 @@ from src.core.applications.dtos.user_dto import CreateUserDto, UpdateUserDto
 from src.core.applications.responses.base import BaseResponse
 from src.core.applications.responses.user_response import UserResponse
 from src.server.application.use_cases.user_use_case import UserUseCase
-from src.server.infrastructure.di.container import ServerContainer
+from src.server.infrastructure.di.server_container import ServerContainer
 
 router = APIRouter()
 

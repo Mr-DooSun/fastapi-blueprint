@@ -3,7 +3,7 @@ from fastapi import FastAPI
 
 from src.core.middleware.exception_middleware import ExceptionMiddleware
 from src.server.application.controllers import health_check_controller, user_controller
-from src.server.infrastructure.di.container import ServerContainer
+from src.server.infrastructure.di.server_container import ServerContainer
 
 container = None
 
