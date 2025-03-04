@@ -19,7 +19,9 @@ router = APIRouter()
 @inject
 async def create_user(
     create_data: CreateUserDto,
-    user_use_case: UserUseCase = Depends(Provide[ServerContainer.user_use_case]),
+    user_use_case: UserUseCase = Depends(
+        Provide[ServerContainer.user_container.user_use_case]
+    ),
 ) -> BaseResponse:
     await user_use_case.create_data(create_data=create_data)
     return BaseResponse()
@@ -29,7 +31,9 @@ async def create_user(
 @inject
 async def create_users(
     create_datas: List[CreateUserDto],
-    user_use_case: UserUseCase = Depends(Provide[ServerContainer.user_use_case]),
+    user_use_case: UserUseCase = Depends(
+        Provide[ServerContainer.user_container.user_use_case]
+    ),
 ) -> BaseResponse:
     await user_use_case.create_datas(create_datas=create_datas)
     return BaseResponse()
@@ -40,7 +44,9 @@ async def create_users(
 async def get_users(
     page: int = 1,
     page_size: int = 10,
-    user_use_case: UserUseCase = Depends(Provide[ServerContainer.user_use_case]),
+    user_use_case: UserUseCase = Depends(
+        Provide[ServerContainer.user_container.user_use_case]
+    ),
 ) -> UserResponse:
     return await user_use_case.get_datas(page=page, page_size=page_size)
 
@@ -49,7 +55,9 @@ async def get_users(
 @inject
 async def get_user_by_user_id(
     user_id: int,
-    user_use_case: UserUseCase = Depends(Provide[ServerContainer.user_use_case]),
+    user_use_case: UserUseCase = Depends(
+        Provide[ServerContainer.user_container.user_use_case]
+    ),
 ) -> UserResponse:
     return await user_use_case.get_data_by_data_id(data_id=user_id)
 
@@ -59,7 +67,9 @@ async def get_user_by_user_id(
 async def update_user_by_user_id(
     user_id: int,
     update_data: UpdateUserDto,
-    user_use_case: UserUseCase = Depends(Provide[ServerContainer.user_use_case]),
+    user_use_case: UserUseCase = Depends(
+        Provide[ServerContainer.user_container.user_use_case]
+    ),
 ) -> UserResponse:
     return await user_use_case.update_data_by_data_id(
         data_id=user_id, update_data=update_data
@@ -70,6 +80,8 @@ async def update_user_by_user_id(
 @inject
 async def delete_user_by_user_id(
     user_id: int,
-    user_use_case: UserUseCase = Depends(Provide[ServerContainer.user_use_case]),
+    user_use_case: UserUseCase = Depends(
+        Provide[ServerContainer.user_container.user_use_case]
+    ),
 ) -> UserResponse:
     return await user_use_case.delete_data_by_data_id(data_id=user_id)

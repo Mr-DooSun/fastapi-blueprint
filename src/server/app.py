@@ -12,7 +12,7 @@ def create_container():
     container = ServerContainer()
     container.wire(packages=["src.server.application.controllers"])
 
-    container.config.from_yaml("./config.yml")
+    container.core_container.config.from_yaml("./config.yml")
 
     return container
 

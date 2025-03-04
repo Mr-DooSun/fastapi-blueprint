@@ -10,11 +10,11 @@ from src.server.infrastructure.repositories.user_repository import UserRepositor
 
 
 class UserContainer(containers.DeclarativeContainer):
-    core_container = providers.Container(CoreContainer)
+    core_container: CoreContainer = providers.DependenciesContainer()
 
     user_repository = providers.Singleton(
         UserRepository,
-        database=core_container.provided.database,
+        database=core_container.database,
     )
 
     user_service = providers.Factory(
