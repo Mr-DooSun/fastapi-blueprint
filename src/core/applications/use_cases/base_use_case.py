@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from abc import ABC, abstractmethod
-from typing import List, Type, TypeVar
+from typing import List, Tuple, Type, TypeVar
 
 from pydantic import BaseModel
 
@@ -40,7 +40,9 @@ class BaseUseCase(ABC):
     async def create_datas(self, create_datas: List[CreateDTO]) -> List[ResponseDto]:
         return await self.base_service.create_datas(create_datas=create_datas)
 
-    async def get_datas(self, page: int, page_size: int) -> List[ResponseDto]:
+    async def get_datas(
+        self, page: int, page_size: int
+    ) -> Tuple[List[ResponseDto], PaginationInfo]:
         datas = await self.base_service.get_datas(page=page, page_size=page_size)
 
         total_items = await self.base_service.count_datas()
