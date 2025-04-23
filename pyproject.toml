@@ -3,7 +3,7 @@ name = "fastapi-layered-architecture"
 version = "0.1.0"
 description = "This is layered architecture for fastapi"
 readme = "README.md"
-requires-python = ">=3.12.8"
+requires-python = ">=3.12.9"
 dependencies = [
     "aiomysql>=0.2.0",
     "alembic>=1.15.2",
