@@ -4,7 +4,7 @@ from typing import List, Type, TypeVar
 
 from pydantic import BaseModel
 
-from src.core.applications.responses.base_response import BaseResponse, PaginationInfo
+from src.core.application.responses.base_response import BaseResponse, PaginationInfo
 from src.core.domain.services.base_service import BaseService
 
 CreateDTO = TypeVar("CreateDTO", bound=BaseModel)
