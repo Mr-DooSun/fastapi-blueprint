@@ -2,7 +2,7 @@
 from abc import ABC, abstractmethod
 from typing import Generic, List, Type, TypeVar
 
-from sqlalchemy import func, insert, select
+from sqlalchemy import func, select
 
 from src.core.domain.entities.entity import Entity
 from src.core.exceptions.base_exception import BaseCustomException
@@ -51,24 +51,22 @@ class BaseRepository(ABC, Generic[CreateEntity, ReturnEntity, UpdateEntity]):
         self, create_datas: List[CreateEntity]
     ) -> List[ReturnEntity]:
         async with self.database.session() as session:
-            result = await session.execute(
-                insert(self.model).values(
-                    [
-                        create_data.model_dump(exclude_none=True)
-                        for create_data in create_datas
-                    ]
-                )
-            )
+            objs = [
+                self.model(**create_data.model_dump(exclude_none=True))
+                for create_data in create_datas
+            ]
+
+            session.add_all(objs)
+            await session.flush()
+
+            for obj in objs:
+                await session.refresh(obj)
+
             await session.commit()
 
-            inserted_ids = [row[0] for row in result.inserted_primary_key_rows]
-
-            result = await session.execute(
-                select(self.model).where(self.model.id.in_(inserted_ids))
-            )
             return [
-                self.return_entity.model_validate(vars(data))
-                for data in result.scalars().all()
+                self.return_entity.model_validate(obj, from_attributes=True)
+                for obj in objs
             ]
 
     async def get_datas(self, page: int, page_size: int) -> List[ReturnEntity]:
