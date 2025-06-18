@@ -51,6 +51,10 @@ class BaseService(ABC):
         data = await self.base_repository.get_data_by_data_id(data_id=data_id)
         return self.response_dto.model_validate(vars(data))
 
+    async def get_datas_by_data_ids(self, data_ids: List[int]) -> List[ResponseDTO]:
+        datas = await self.base_repository.get_datas_by_data_ids(data_ids=data_ids)
+        return [self.response_dto.model_validate(vars(data)) for data in datas]
+
     async def count_datas(self) -> int:
         return await self.base_repository.count_datas()
 

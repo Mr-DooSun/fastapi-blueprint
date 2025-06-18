@@ -92,15 +92,13 @@ class BaseRepository(ABC, Generic[CreateEntity, ReturnEntity, UpdateEntity]):
 
         return self.return_entity.model_validate(vars(data))
 
-    async def get_datas_by_data_id(
-        self, data_id: int, page: int, page_size: int
-    ) -> List[ReturnEntity]:
+    async def get_datas_by_data_ids(self, data_ids: List[int]) -> List[ReturnEntity]:
+        if not data_ids:
+            return []
+
         async with self.database.session() as session:
             result = await session.execute(
-                select(self.model)
-                .filter(self.model.id == data_id)
-                .offset((page - 1) * page_size)
-                .limit(page_size)
+                select(self.model).where(self.model.id.in_(data_ids))
             )
             datas = result.scalars().all()
 

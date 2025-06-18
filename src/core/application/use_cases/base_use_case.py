@@ -64,6 +64,9 @@ class BaseUseCase(ABC):
     async def get_data_by_data_id(self, data_id: int) -> ResponseDto:
         return await self.base_service.get_data_by_data_id(data_id=data_id)
 
+    async def get_datas_by_data_ids(self, data_ids: List[int]) -> List[ResponseDto]:
+        return await self.base_service.get_datas_by_data_ids(data_ids=data_ids)
+
     async def update_data_by_data_id(
         self, data_id: int, update_data: UpdateDTO
     ) -> ResponseDto:
