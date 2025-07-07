@@ -106,7 +106,8 @@ class BaseRepository(ABC, Generic[CreateEntity, ReturnEntity, UpdateEntity]):
 
     async def count_datas(self) -> int:
         async with self.database.session() as session:
-            return await session.scalar(select(func.count()).select_from(self.model))
+            result = await session.execute(select(func.count()).select_from(self.model))
+            return result.scalar_one()
 
     async def update_data_by_data_id(
         self, data_id: int, update_data: UpdateEntity
@@ -118,7 +119,9 @@ class BaseRepository(ABC, Generic[CreateEntity, ReturnEntity, UpdateEntity]):
             data = result.scalar_one_or_none()
 
             if not data:
-                return None
+                raise BaseCustomException(
+                    status_code=404, message=f"Data with ID [ {data_id} ] not found"
+                )
 
             for key, value in update_data.model_dump(exclude_none=True).items():
                 setattr(data, key, value)
