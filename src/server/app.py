@@ -30,8 +30,8 @@ def create_app():
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    register_routes(app)
-    setup_admin_views(app, container.core_container.database())
+    register_routes(app=app)
+    setup_admin_views(app=app, database=container.core_container.database())
 
     return app
 
