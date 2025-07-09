@@ -6,8 +6,6 @@ from src.server.infrastructure.di.containers.user_container import UserContainer
 
 
 class ServerContainer(containers.DeclarativeContainer):
-    core_container: CoreContainer = providers.Container(CoreContainer)
+    core_container = providers.Container(CoreContainer)
 
-    user_container: UserContainer = providers.Container(
-        UserContainer, core_container=core_container
-    )
+    user_container = providers.Container(UserContainer, core_container=core_container)
