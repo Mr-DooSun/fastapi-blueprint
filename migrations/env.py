@@ -17,12 +17,14 @@ config = context.config
 
 env = config.get_main_option("env")
 if env != "dev" and env != "prod" and env != "stg":
-    raise RuntimeError("ENV 환경변수가 지정되지 않았습니다. [dev], [prod], [stg] 중 하나를 입력해주세요.")
+    raise RuntimeError(
+        "alembic.ini 파일에 ENV 환경변수가 지정되지 않았습니다. [dev], [prod], [stg] 중 하나를 입력해주세요."
+    )
 else:
     if not os.path.exists(f"_env/{env}.env"):
         raise RuntimeError(f"환경변수 파일이 존재하지 않습니다. {f'_env/{env}.env'}")
     print("=" * 100)
-    print(f"ENV: {env}")
+    print(f"alembic.ini 파일에 선택된 ENV: {env}")
     print("=" * 100)
 
 create_folder_if_not_exists("migrations/versions")
