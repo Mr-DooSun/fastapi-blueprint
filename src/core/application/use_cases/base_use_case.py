@@ -9,9 +9,9 @@ from src.core.application.dtos.common.base_response import PaginationInfo
 from src.core.common.pagination import make_pagination
 from src.core.domain.services.base_service import BaseService
 
-CreateDTO = TypeVar("CreateDTO", bound=BaseModel)
-UpdateDTO = TypeVar("UpdateDTO", bound=BaseModel)
-ResponseDTO = TypeVar("ResponseDTO", bound=BaseModel)
+CreateEntity = TypeVar("CreateEntity", bound=BaseModel)
+ReturnEntity = TypeVar("ReturnEntity", bound=BaseModel)
+UpdateEntity = TypeVar("UpdateEntity", bound=BaseModel)
 
 
 class BaseUseCase(ABC):
@@ -23,28 +23,30 @@ class BaseUseCase(ABC):
 
     @property
     @abstractmethod
-    def create_dto(self) -> Type[CreateDTO]:
+    def create_entity(self) -> Type[CreateEntity]:
         pass
 
     @property
     @abstractmethod
-    def response_dto(self) -> Type[ResponseDTO]:
+    def return_entity(self) -> Type[ReturnEntity]:
         pass
 
     @property
     @abstractmethod
-    def update_dto(self) -> Type[UpdateDTO]:
+    def update_entity(self) -> Type[UpdateEntity]:
         pass
 
-    async def create_data(self, create_data: CreateDTO) -> ResponseDTO:
+    async def create_data(self, create_data: CreateEntity) -> ReturnEntity:
         return await self.base_service.create_data(create_data=create_data)
 
-    async def create_datas(self, create_datas: List[CreateDTO]) -> List[ResponseDTO]:
+    async def create_datas(
+        self, create_datas: List[CreateEntity]
+    ) -> List[ReturnEntity]:
         return await self.base_service.create_datas(create_datas=create_datas)
 
     async def get_datas(
         self, page: int, page_size: int
-    ) -> Tuple[List[ResponseDTO], PaginationInfo]:
+    ) -> Tuple[List[ReturnEntity], PaginationInfo]:
         datas = await self.base_service.get_datas(page=page, page_size=page_size)
 
         total_items = await self.base_service.count_datas()
@@ -54,15 +56,15 @@ class BaseUseCase(ABC):
 
         return datas, pagination
 
-    async def get_data_by_data_id(self, data_id: int) -> ResponseDTO:
+    async def get_data_by_data_id(self, data_id: int) -> ReturnEntity:
         return await self.base_service.get_data_by_data_id(data_id=data_id)
 
-    async def get_datas_by_data_ids(self, payload: IdListDto) -> List[ResponseDTO]:
+    async def get_datas_by_data_ids(self, payload: IdListDto) -> List[ReturnEntity]:
         return await self.base_service.get_datas_by_data_ids(data_ids=payload.ids)
 
     async def update_data_by_data_id(
-        self, data_id: int, update_data: UpdateDTO
-    ) -> ResponseDTO:
+        self, data_id: int, update_data: UpdateEntity
+    ) -> ReturnEntity:
         return await self.base_service.update_data_by_data_id(
             data_id=data_id, update_data=update_data
         )
