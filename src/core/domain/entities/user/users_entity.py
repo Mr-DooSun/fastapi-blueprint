@@ -1,28 +1,30 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 
+from pydantic import Field
+
 from src.core.domain.entities.entity import Entity
 
 
 class CoreUsersEntity(Entity):
-    id: int
-    username: str
-    full_name: str
-    email: str
-    password: str
-    create_at: datetime
-    updated_at: datetime
+    id: int = Field(..., description="유저 고유 식별자")
+    username: str = Field(..., description="유저 아이디")
+    full_name: str = Field(..., description="유저 이름")
+    email: str = Field(..., description="유저 이메일")
+    password: str = Field(..., description="유저 비밀번호")
+    create_at: datetime = Field(..., description="유저 생성 시간")
+    updated_at: datetime = Field(..., description="유저 수정 시간")
 
 
 class CoreCreateUsersEntity(Entity):
-    username: str
-    full_name: str
-    email: str
-    password: str
+    username: str = Field(..., description="유저 아이디")
+    full_name: str = Field(..., description="유저 이름")
+    email: str = Field(..., description="유저 이메일")
+    password: str = Field(..., description="유저 비밀번호")
 
 
 class CoreUpdateUsersEntity(Entity):
-    username: str
-    full_name: str
-    email: str
-    password: str
+    username: str = Field(..., description="유저 아이디")
+    full_name: str = Field(..., description="유저 이름")
+    email: str = Field(..., description="유저 이메일")
+    password: str = Field(..., description="유저 비밀번호")
