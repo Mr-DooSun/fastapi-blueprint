@@ -12,7 +12,7 @@ container = None
 
 def create_container():
     container = ServerContainer()
-    container.wire(packages=["src.server.application.routers"])
+    container.wire(packages=["src.server.application.routers.api"])
 
     return container
 
