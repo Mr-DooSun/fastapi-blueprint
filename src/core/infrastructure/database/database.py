@@ -38,7 +38,16 @@ def get_database_config(env: str):
             "max_overflow": 20,
             "pool_pre_ping": True,
             "pool_recycle": 3600,
-            "connect_args": {"connect_timeout": 10},
+            "connect_args": {
+                "timeout": 10,
+                "connect_timeout": 10,
+                "command_timeout": 30,
+                "server_settings": {
+                    "statement_timeout": "30000",
+                    "idle_in_transaction_session_timeout": "300000",
+                    "application_name": "server_api",
+                },
+            },
         }
     else:
         return {"echo": True, "pool_size": 5, "max_overflow": 10, "pool_pre_ping": True}
@@ -90,16 +99,19 @@ class Database:
 
     @asynccontextmanager
     async def session(self) -> AsyncGenerator[AsyncSession, None]:
-        async with self.async_session_factory() as session:
-            session: AsyncSession
+        session = None
 
-            try:
-                yield session
-            except IntegrityError:
+        try:
+            session = self.async_session_factory()
+            yield session
+        except IntegrityError:
+            if session:
                 await session.rollback()
-                raise HTTPException(status_code=400, detail="Data integrity error")
-            except Exception:
+            raise HTTPException(status_code=400, detail="Data integrity error")
+        except Exception:
+            if session:
                 await session.rollback()
-                raise HTTPException(status_code=500, detail="Internal server error")
-            finally:
+            raise HTTPException(status_code=500, detail="Internal server error")
+        finally:
+            if session:
                 await session.close()
