@@ -42,9 +42,6 @@ def create_app():
     # User 도메인 bootstrap
     bootstrap_user_domain(app, database=database)
 
-    # Chat 도메인은 현재 bootstrap이 없으므로 주석 처리
-    # bootstrap_chat_domain(app, database=database)
-
     return app
 
 

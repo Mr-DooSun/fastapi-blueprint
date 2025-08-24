@@ -20,7 +20,7 @@ def create_container():
 
 
 def create_app():
-    """User 도메인 전용 FastAPI 앱"""
+    """User 도메인 전용 FastAPI 앱 - 마이크로서비스"""
     container = create_container()
 
     app = FastAPI(
@@ -53,7 +53,4 @@ app = create_app()
 
 if __name__ == "__main__":
     import uvicorn
-
-    uvicorn.run(
-        "src.apps.microservices.user.app:app", reload=True, host="127.0.0.1", port=8001
-    )
+    uvicorn.run("src.domains.user.app:app", reload=True, host="127.0.0.1", port=8001)
