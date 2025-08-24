@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
 
-from src.core.application.use_cases.base_use_case import BaseUseCase
-from src.core.domain.entities.user.users_entity import (
+from src.domains.core.application.use_cases.base_use_case import BaseUseCase
+from src.domains.core.domain.entities.user.users_entity import (
     CoreCreateUsersEntity,
     CoreUpdateUsersEntity,
     CoreUsersEntity,
 )
-from src.user.domain.services.users_service import UsersService
+from src.domains.user.domain.services.users_service import UsersService
 
 
 class UsersUseCase(

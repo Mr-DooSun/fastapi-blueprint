@@ -3,7 +3,7 @@ from datetime import datetime
 
 from pydantic import Field
 
-from src.core.domain.entities.entity import Entity
+from src.domains.core.domain.entities.entity import Entity
 
 
 class CoreUsersEntity(Entity):

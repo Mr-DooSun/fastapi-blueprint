@@ -4,9 +4,9 @@ from typing import Generic, List, Type, TypeVar
 
 from sqlalchemy import func, select
 
-from src.core.domain.entities.entity import Entity
-from src.core.exceptions.base_exception import BaseCustomException
-from src.core.infrastructure.database.database import Base, Database
+from src.domains.core.domain.entities.entity import Entity
+from src.domains.core.exceptions.base_exception import BaseCustomException
+from src.domains.core.infrastructure.database.database import Base, Database
 
 CreateEntity = TypeVar("CreateEntity", bound=Entity)
 ReturnEntity = TypeVar("ReturnEntity", bound=Entity)

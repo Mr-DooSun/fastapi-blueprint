@@ -6,20 +6,20 @@ from typing import List
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, Query
 
-from src.core.application.dtos.common.base_request import IdListDto
-from src.core.application.dtos.common.base_response import SuccessResponse
-from src.core.application.dtos.user.users_dto import (
+from src.domains.core.application.dtos.common.base_request import IdListDto
+from src.domains.core.application.dtos.common.base_response import SuccessResponse
+from src.domains.core.application.dtos.user.users_dto import (
     CoreCreateUsersRequest,
     CoreUpdateUsersRequest,
     CoreUsersResponse,
 )
-from src.core.common.dto_utils import dtos_to_entities, entities_to_dtos
-from src.core.domain.entities.user.users_entity import (
+from src.domains.core.common.dto_utils import dtos_to_entities, entities_to_dtos
+from src.domains.core.domain.entities.user.users_entity import (
     CoreCreateUsersEntity,
     CoreUpdateUsersEntity,
 )
-from src.user.infrastructure.di.server_container import ServerContainer
-from src.user.server.application.use_cases.users_use_case import UsersUseCase
+from src.domains.user.infrastructure.di.server_container import ServerContainer
+from src.domains.user.server.application.use_cases.users_use_case import UsersUseCase
 
 router = APIRouter()
 

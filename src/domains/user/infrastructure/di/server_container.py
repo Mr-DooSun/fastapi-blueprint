@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from dependency_injector import containers, providers
 
-from src.core.infrastructure.di.core_container import CoreContainer
-from src.user.infrastructure.di.user_container import UserContainer
+from src.domains.core.infrastructure.di.core_container import CoreContainer
+from src.domains.user.infrastructure.di.user_container import UserContainer
 
 
 class ServerContainer(containers.DeclarativeContainer):

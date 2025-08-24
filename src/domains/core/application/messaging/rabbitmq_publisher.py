@@ -3,7 +3,7 @@ import json
 
 import pika
 
-from src.core.infrastructure.messaging.rabbitmq_manager import RabbitMQManager
+from src.domains.core.infrastructure.messaging.rabbitmq_manager import RabbitMQManager
 
 
 class RabbitMQPublisher:

@@ -6,8 +6,8 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from src.core.application.dtos.common.base_response import ErrorResponse
-from src.core.exceptions.base_exception import BaseCustomException
+from src.domains.core.application.dtos.common.base_response import ErrorResponse
+from src.domains.core.exceptions.base_exception import BaseCustomException
 
 
 class ExceptionMiddleware(BaseHTTPMiddleware):

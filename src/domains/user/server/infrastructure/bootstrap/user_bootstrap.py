@@ -3,9 +3,9 @@
 from fastapi import FastAPI
 from sqladmin import Admin
 
-from src.core.infrastructure.database.database import Database
-from src.user.server.admin.views.users_view import UsersView
-from src.user.server.application.routers import users_router
+from src.domains.core.infrastructure.database.database import Database
+from src.domains.user.server.admin.views.users_view import UsersView
+from src.domains.user.server.application.routers import users_router
 
 
 def setup_user_routes(app: FastAPI):

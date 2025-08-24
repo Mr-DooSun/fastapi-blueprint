@@ -2,11 +2,11 @@
 from abc import ABC
 from typing import Generic, List, Tuple, Type, TypeVar
 
-from src.core.application.dtos.common.base_request import IdListDto
-from src.core.application.dtos.common.base_response import PaginationInfo
-from src.core.common.pagination import make_pagination
-from src.core.domain.entities.entity import Entity
-from src.core.domain.services.base_service import BaseService
+from src.domains.core.application.dtos.common.base_request import IdListDto
+from src.domains.core.application.dtos.common.base_response import PaginationInfo
+from src.domains.core.common.pagination import make_pagination
+from src.domains.core.domain.entities.entity import Entity
+from src.domains.core.domain.services.base_service import BaseService
 
 CreateEntity = TypeVar("CreateEntity", bound=Entity)
 ReturnEntity = TypeVar("ReturnEntity", bound=Entity)

@@ -2,8 +2,8 @@
 from abc import ABC
 from typing import Generic, List, Type, TypeVar
 
-from src.core.domain.entities.entity import Entity
-from src.core.infrastructure.repositories.base_repository import BaseRepository
+from src.domains.core.domain.entities.entity import Entity
+from src.domains.core.infrastructure.repositories.base_repository import BaseRepository
 
 CreateEntity = TypeVar("CreateEntity", bound=Entity)
 ReturnEntity = TypeVar("ReturnEntity", bound=Entity)

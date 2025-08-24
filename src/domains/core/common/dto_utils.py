@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from typing import List, Type, TypeVar
 
-from src.core.application.dtos.common.base_request import BaseRequest
-from src.core.application.dtos.common.base_response import BaseResponse
-from src.core.domain.entities.entity import Entity
+from src.domains.core.application.dtos.common.base_request import BaseRequest
+from src.domains.core.application.dtos.common.base_response import BaseResponse
+from src.domains.core.domain.entities.entity import Entity
 
 EntityType = TypeVar("EntityType", bound=Entity)
 RequestDtoType = TypeVar("RequestDtoType", bound=BaseRequest)

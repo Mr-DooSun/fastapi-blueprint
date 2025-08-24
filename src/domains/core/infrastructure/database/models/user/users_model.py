@@ -2,7 +2,7 @@
 from sqlalchemy import DateTime, Integer, String, func
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.core.infrastructure.database.database import Base
+from src.domains.core.infrastructure.database.database import Base
 
 
 class UsersModel(Base):

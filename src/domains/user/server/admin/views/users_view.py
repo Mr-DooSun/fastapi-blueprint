@@ -2,7 +2,7 @@
 from sqladmin import ModelView
 from sqlalchemy.orm import class_mapper
 
-from src.core.infrastructure.database.models.user.users_model import UsersModel
+from src.domains.core.infrastructure.database.models.user.users_model import UsersModel
 
 
 class UsersView(ModelView, model=UsersModel):
