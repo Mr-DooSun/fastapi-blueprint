@@ -6,6 +6,12 @@ from sqladmin import Admin
 from src._core.infrastructure.database.database import Database
 from src.user.server.admin.views.users_view import UsersView
 from src.user.server.application.routers import users_router
+from src.user.infrastructure.di.user_container import UserContainer
+
+
+def create_user_container(user_container: UserContainer):
+    user_container.wire(packages=["src.user.server.application.routers"])
+    return user_container
 
 
 def setup_user_routes(app: FastAPI):
@@ -20,11 +26,9 @@ def setup_user_admin(app: FastAPI, database: Database):
     return admin
 
 
-def bootstrap_user_domain(app: FastAPI, database: Database = None):
-    """User 도메인 완전 독립 설정"""
-    # 라우터 등록
-    setup_user_routes(app)
+def bootstrap_user_domain(app: FastAPI, database: Database, user_container: UserContainer):
+    user_container = create_user_container(user_container=user_container)
+    setup_user_routes(app=app)
 
-    # 관리자 페이지 (필요시)
     if database:
-        setup_user_admin(app, database)
+        setup_user_admin(app=app, database=database)
