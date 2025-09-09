@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src._core.application.routers.api import docs_router, health_check_router
-from src._core.infrastructure.di.core_container import CoreContainer
+from src._shared.infrastructure.di.server_container import ServerContainer
 from src._core.middleware.exception_middleware import ExceptionMiddleware
 from src.user.server.infrastructure.bootstrap.user_bootstrap import (
     bootstrap_user_domain,
@@ -11,7 +11,9 @@ from src.user.server.infrastructure.bootstrap.user_bootstrap import (
 
 
 def create_app():
-    """모놀리식 DDD FastAPI 앱 - 도메인별 독립 구성을 통합"""
+    server_container = ServerContainer()
+    database = server_container.core_container.database()
+
     app = FastAPI(
         title="FastAPI Layered Architecture (Monolith)",
         description="DDD 기반 모놀리식 아키텍처 - 각 도메인이 독립적으로 구성됨",
@@ -21,7 +23,6 @@ def create_app():
         redoc_url="/docs-redoc",
     )
 
-    # 미들웨어 설정
     app.add_middleware(ExceptionMiddleware)
     app.add_middleware(
         CORSMiddleware,
@@ -31,16 +32,14 @@ def create_app():
         allow_headers=["*"],
     )
 
-    # 공통 라우터 (Core)
     app.include_router(router=health_check_router.router, tags=["status"])
     app.include_router(router=docs_router.router, tags=["docs"])
 
-    # 도메인별 독립 설정
-    core_container = CoreContainer()
-    database = core_container.database()
-
-    # User 도메인 bootstrap
-    bootstrap_user_domain(app, database=database)
+    bootstrap_user_domain(
+        app=app,
+        database=database,
+        user_container=server_container.user_container
+    )
 
     return app
 

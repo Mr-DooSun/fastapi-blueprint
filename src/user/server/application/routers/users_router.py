@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, Query
 
 from src._core.application.dtos.base_request import IdListDto
 from src._core.application.dtos.base_response import SuccessResponse
-from src._core.application.dtos.user.users_dto import (
+from src.user.server.application.dtos.users_dto import (
     CoreCreateUsersRequest,
     CoreUpdateUsersRequest,
     CoreUsersResponse,
@@ -18,7 +18,7 @@ from src.user.domain.entities.users_entity import (
     CoreCreateUsersEntity,
     CoreUpdateUsersEntity,
 )
-from src.user.infrastructure.di.server_container import ServerContainer
+from src.user.infrastructure.di.user_container import UserContainer
 from src.user.server.application.use_cases.users_use_case import UsersUseCase
 
 router = APIRouter()
@@ -37,7 +37,7 @@ router = APIRouter()
 async def create_user(
     create_data: CoreCreateUsersRequest,
     user_use_case: UsersUseCase = Depends(
-        Provide[ServerContainer.user_container.users_use_case]
+        Provide[UserContainer.users_use_case]
     ),
 ) -> SuccessResponse[CoreUsersResponse]:
     data = await user_use_case.create_data(
@@ -59,7 +59,7 @@ async def create_user(
 async def create_users(
     create_datas: List[CoreCreateUsersRequest],
     user_use_case: UsersUseCase = Depends(
-        Provide[ServerContainer.user_container.users_use_case]
+        Provide[UserContainer.users_use_case]
     ),
 ) -> SuccessResponse[List[CoreUsersResponse]]:
     entities = dtos_to_entities(create_datas, CoreCreateUsersEntity)
@@ -80,7 +80,7 @@ async def get_users(
     page: int = 1,
     page_size: int = Query(10, alias="pageSize"),
     user_use_case: UsersUseCase = Depends(
-        Provide[ServerContainer.user_container.users_use_case]
+        Provide[UserContainer.users_use_case]
     ),
 ) -> SuccessResponse[List[CoreUsersResponse]]:
     datas, pagination = await user_use_case.get_datas(page=page, page_size=page_size)
@@ -103,7 +103,7 @@ async def get_users(
 async def get_user_by_user_id(
     user_id: int,
     user_use_case: UsersUseCase = Depends(
-        Provide[ServerContainer.user_container.users_use_case]
+        Provide[UserContainer.users_use_case]
     ),
 ) -> SuccessResponse[CoreUsersResponse]:
     data = await user_use_case.get_data_by_data_id(data_id=user_id)
@@ -123,7 +123,7 @@ async def get_user_by_user_id(
 async def get_users_by_ids(
     payload: IdListDto,
     user_use_case: UsersUseCase = Depends(
-        Provide[ServerContainer.user_container.users_use_case]
+        Provide[UserContainer.users_use_case]
     ),
 ) -> SuccessResponse[List[CoreUsersResponse]]:
     datas = await user_use_case.get_datas_by_data_ids(payload=payload)
@@ -144,7 +144,7 @@ async def update_user_by_user_id(
     user_id: int,
     update_data: CoreUpdateUsersRequest,
     user_use_case: UsersUseCase = Depends(
-        Provide[ServerContainer.user_container.users_use_case]
+        Provide[UserContainer.users_use_case]
     ),
 ) -> SuccessResponse[CoreUsersResponse]:
     data = await user_use_case.update_data_by_data_id(
@@ -166,7 +166,7 @@ async def update_user_by_user_id(
 async def delete_user_by_user_id(
     user_id: int,
     users_use_case: UsersUseCase = Depends(
-        Provide[ServerContainer.user_container.users_use_case]
+        Provide[UserContainer.users_use_case]
     ),
 ) -> SuccessResponse:
     success = await users_use_case.delete_data_by_data_id(data_id=user_id)
