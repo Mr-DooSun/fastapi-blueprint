@@ -5,12 +5,12 @@ from sqladmin import Admin
 
 from src._core.infrastructure.database.database import Database
 from src.user.infrastructure.di.user_container import UserContainer
-from src.user.server.admin.views.users_view import UsersView
-from src.user.server.application.routers import users_router
+from src.user.interface.admin.views.users_view import UsersView
+from src.user.interface.server.routers import users_router
 
 
 def create_user_container(user_container: UserContainer):
-    user_container.wire(packages=["src.user.server.application.routers"])
+    user_container.wire(packages=["src.user.interface.server.routers"])
     return user_container
 
 

@@ -6,9 +6,7 @@ from src._core.application.dtos.base_response import ErrorResponse
 from src._core.application.routers.api import docs_router, health_check_router
 from src._core.middleware.exception_middleware import ExceptionMiddleware
 from src._shared.infrastructure.di.server_container import ServerContainer
-from src.user.server.infrastructure.bootstrap.user_bootstrap import (
-    bootstrap_user_domain,
-)
+from src.user.interface.server.bootstrap.user_bootstrap import bootstrap_user_domain
 
 
 def create_app():

@@ -9,17 +9,17 @@ from fastapi import APIRouter, Depends, Query
 from src._core.application.dtos.base_request import IdListDto
 from src._core.application.dtos.base_response import SuccessResponse
 from src._core.common.dto_utils import dtos_to_entities, entities_to_dtos
+from src.user.application.use_cases.users_use_case import UsersUseCase
 from src.user.domain.entities.users_entity import (
     CoreCreateUsersEntity,
     CoreUpdateUsersEntity,
 )
 from src.user.infrastructure.di.user_container import UserContainer
-from src.user.server.application.dtos.users_dto import (
+from src.user.interface.server.dtos.users_dto import (
     CoreCreateUsersRequest,
     CoreUpdateUsersRequest,
     CoreUsersResponse,
 )
-from src.user.server.application.use_cases.users_use_case import UsersUseCase
 
 router = APIRouter()
 
