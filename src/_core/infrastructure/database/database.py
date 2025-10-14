@@ -83,7 +83,9 @@ class Database:
             database_name=database_name,
         )
 
-        self.engine = create_engine(url=dsn, echo=False)
+        sync_config = get_database_config(env=env)
+        sync_config.pop("connect_args", None)
+        self.engine = create_engine(url=dsn, **sync_config)
         self.async_engine = create_async_engine(
             url=async_dsn,
             **get_database_config(env=env),
@@ -115,3 +117,8 @@ class Database:
         finally:
             if session:
                 await session.close()
+
+    async def dispose(self) -> None:
+        """연결 풀을 정리하고 모든 연결을 닫습니다."""
+        await self.async_engine.dispose()
+        self.engine.dispose()

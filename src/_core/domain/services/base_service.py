@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from abc import ABC
-from typing import Generic, List, Type, TypeVar
+from typing import Generic, List, Tuple, Type, TypeVar
 
 from src._core.domain.entities.entity import Entity
 from src._core.infrastructure.repositories.base_repository import BaseRepository
@@ -43,6 +43,13 @@ class BaseService(Generic[CreateEntity, ReturnEntity, UpdateEntity], ABC):
 
     async def count_datas(self) -> int:
         return await self.base_repository.count_datas()
+
+    async def get_datas_with_count(
+        self, page: int, page_size: int
+    ) -> Tuple[List[ReturnEntity], int]:
+        return await self.base_repository.get_datas_with_count(
+            page=page, page_size=page_size
+        )
 
     async def update_data_by_data_id(
         self, data_id: int, update_data: UpdateEntity

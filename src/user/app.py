@@ -3,17 +3,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src._core.application.routers.api import docs_router, health_check_router
+from src._core.infrastructure.di.core_container import CoreContainer
 from src._core.middleware.exception_middleware import ExceptionMiddleware
 from src.user.infrastructure.di.user_container import UserContainer
-from src.user.server.infrastructure.bootstrap.user_bootstrap import (
-    bootstrap_user_domain,
-)
+from src.user.interface.server.bootstrap.user_bootstrap import bootstrap_user_domain
 
 
 def create_container():
     """User 도메인 전용 DI 컨테이너"""
-    from src._core.infrastructure.di.core_container import CoreContainer
-
     core_container = CoreContainer()
     container = UserContainer(core_container=core_container)
     container.wire(packages=["src.user.server.application.routers"])

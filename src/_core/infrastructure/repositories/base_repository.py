@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from abc import ABC
-from typing import Generic, List, Type, TypeVar
+from typing import Generic, List, Tuple, Type, TypeVar
 
 from sqlalchemy import func, select
 
@@ -98,6 +98,32 @@ class BaseRepository(Generic[CreateEntity, ReturnEntity, UpdateEntity], ABC):
         async with self.database.session() as session:
             result = await session.execute(select(func.count()).select_from(self.model))
             return result.scalar_one()
+
+    async def get_datas_with_count(
+        self, page: int, page_size: int
+    ) -> Tuple[List[ReturnEntity], int]:
+        """데이터 조회와 카운트를 하나의 세션에서 처리하여 연결 풀 사용 최적화"""
+        async with self.database.session() as session:
+            # 데이터 조회
+            result = await session.execute(
+                select(self.model).offset((page - 1) * page_size).limit(page_size)
+            )
+            datas = result.scalars().all()
+
+            # 카운트 조회 (동일 세션)
+            count_result = await session.execute(
+                select(func.count()).select_from(self.model)
+            )
+            total_count = count_result.scalar_one()
+
+            # 필요한 경우에만 관계 로딩
+            if hasattr(self.model, "related_entities"):
+                await session.refresh(datas, ["related_entities"])
+
+            return [
+                self.return_entity.model_validate(data, from_attributes=True)
+                for data in datas
+            ], total_count
 
     async def update_data_by_data_id(
         self, data_id: int, update_data: UpdateEntity

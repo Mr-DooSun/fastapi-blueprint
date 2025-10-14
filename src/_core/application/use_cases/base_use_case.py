@@ -38,9 +38,10 @@ class BaseUseCase(Generic[CreateEntity, ReturnEntity, UpdateEntity], ABC):
     async def get_datas(
         self, page: int, page_size: int
     ) -> Tuple[List[ReturnEntity], PaginationInfo]:
-        datas = await self.base_service.get_datas(page=page, page_size=page_size)
+        datas, total_items = await self.base_service.get_datas_with_count(
+            page=page, page_size=page_size
+        )
 
-        total_items = await self.base_service.count_datas()
         pagination = make_pagination(
             total_items=total_items, page=page, page_size=page_size
         )
