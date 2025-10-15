@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from celery import Celery
 from kombu.utils.url import safequote
 

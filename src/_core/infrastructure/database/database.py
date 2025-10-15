@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from urllib.parse import quote_plus

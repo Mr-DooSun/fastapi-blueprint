@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import Optional
 
 import aiohttp
 from fastapi import HTTPException
@@ -33,7 +31,7 @@ class HttpClient:
     def __init__(self, env: str) -> None:
         self.env = env
         self._config = get_http_client_config(env=env)
-        self._client_session: Optional[aiohttp.ClientSession] = None
+        self._client_session: aiohttp.ClientSession | None = None
 
     async def _ensure_session(self) -> aiohttp.ClientSession:
         if self._client_session is None or self._client_session.closed:

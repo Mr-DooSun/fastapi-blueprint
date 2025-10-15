@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
 """User 도메인 독립 Bootstrap"""
+
 from fastapi import FastAPI
 from sqladmin import Admin
 

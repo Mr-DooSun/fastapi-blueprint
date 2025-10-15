@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-from typing import Any, Dict
+from typing import Any
 
 from src._core.infrastructure.http.http_client import HttpClient
 
@@ -9,7 +8,7 @@ class ExampleApiGateway:
         self.http_client = http_client
         self.base_url = base_url
 
-    async def get_data(self, resource_id: str) -> Dict[str, Any]:
+    async def get_data(self, resource_id: str) -> dict[str, Any]:
         async with self.http_client.session() as session:
             async with session.get(
                 f"{self.base_url}/resources/{resource_id}",
@@ -18,7 +17,7 @@ class ExampleApiGateway:
                 response.raise_for_status()
                 return await response.json()
 
-    async def create_data(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    async def create_data(self, data: dict[str, Any]) -> dict[str, Any]:
         async with self.http_client.session() as session:
             async with session.post(
                 f"{self.base_url}/resources",
@@ -29,8 +28,8 @@ class ExampleApiGateway:
                 return await response.json()
 
     async def update_data(
-        self, resource_id: str, data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, resource_id: str, data: dict[str, Any]
+    ) -> dict[str, Any]:
         async with self.http_client.session() as session:
             async with session.put(
                 f"{self.base_url}/resources/{resource_id}",

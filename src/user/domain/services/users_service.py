@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from src._core.domain.services.base_service import BaseService
 from src.user.domain.entities.users_entity import (
     CoreCreateUsersEntity,

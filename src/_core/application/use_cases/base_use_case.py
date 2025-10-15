@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 from abc import ABC
-from typing import Generic, List, Tuple, Type, TypeVar
+from typing import Generic, TypeVar
 
 from src._core.application.dtos.base_request import IdListDto
 from src._core.application.dtos.base_response import PaginationInfo
@@ -18,9 +17,9 @@ class BaseUseCase(Generic[CreateEntity, ReturnEntity, UpdateEntity], ABC):
         self,
         base_service: BaseService,
         *,
-        create_entity: Type[CreateEntity],
-        return_entity: Type[ReturnEntity],
-        update_entity: Type[UpdateEntity],
+        create_entity: type[CreateEntity],
+        return_entity: type[ReturnEntity],
+        update_entity: type[UpdateEntity],
     ) -> None:
         self.base_service = base_service
         self.create_entity = create_entity
@@ -31,13 +30,13 @@ class BaseUseCase(Generic[CreateEntity, ReturnEntity, UpdateEntity], ABC):
         return await self.base_service.create_data(create_data=create_data)
 
     async def create_datas(
-        self, create_datas: List[CreateEntity]
-    ) -> List[ReturnEntity]:
+        self, create_datas: list[CreateEntity]
+    ) -> list[ReturnEntity]:
         return await self.base_service.create_datas(create_datas=create_datas)
 
     async def get_datas(
         self, page: int, page_size: int
-    ) -> Tuple[List[ReturnEntity], PaginationInfo]:
+    ) -> tuple[list[ReturnEntity], PaginationInfo]:
         datas, total_items = await self.base_service.get_datas_with_count(
             page=page, page_size=page_size
         )
@@ -51,7 +50,7 @@ class BaseUseCase(Generic[CreateEntity, ReturnEntity, UpdateEntity], ABC):
     async def get_data_by_data_id(self, data_id: int) -> ReturnEntity:
         return await self.base_service.get_data_by_data_id(data_id=data_id)
 
-    async def get_datas_by_data_ids(self, payload: IdListDto) -> List[ReturnEntity]:
+    async def get_datas_by_data_ids(self, payload: IdListDto) -> list[ReturnEntity]:
         return await self.base_service.get_datas_by_data_ids(data_ids=payload.ids)
 
     async def update_data_by_data_id(

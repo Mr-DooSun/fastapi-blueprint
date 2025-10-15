@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 from abc import ABC
-from typing import Generic, List, Tuple, Type, TypeVar
+from typing import Generic, TypeVar
 
 from sqlalchemy import func, select
 
@@ -18,10 +17,10 @@ class BaseRepository(Generic[CreateEntity, ReturnEntity, UpdateEntity], ABC):
         self,
         database: Database,
         *,
-        model: Type[Base],
-        create_entity: Type[CreateEntity],
-        return_entity: Type[ReturnEntity],
-        update_entity: Type[UpdateEntity],
+        model: type[Base],
+        create_entity: type[CreateEntity],
+        return_entity: type[ReturnEntity],
+        update_entity: type[UpdateEntity],
     ) -> None:
         self.database = database
         self.model = model
@@ -38,8 +37,8 @@ class BaseRepository(Generic[CreateEntity, ReturnEntity, UpdateEntity], ABC):
             return self.return_entity.model_validate(data, from_attributes=True)
 
     async def create_datas(
-        self, create_datas: List[CreateEntity]
-    ) -> List[ReturnEntity]:
+        self, create_datas: list[CreateEntity]
+    ) -> list[ReturnEntity]:
         async with self.database.session() as session:
             datas = [
                 self.model(**create_data.model_dump(exclude_none=True))
@@ -53,7 +52,7 @@ class BaseRepository(Generic[CreateEntity, ReturnEntity, UpdateEntity], ABC):
                 for data in datas
             ]
 
-    async def get_datas(self, page: int, page_size: int) -> List[ReturnEntity]:
+    async def get_datas(self, page: int, page_size: int) -> list[ReturnEntity]:
         async with self.database.session() as session:
             result = await session.execute(
                 select(self.model).offset((page - 1) * page_size).limit(page_size)
@@ -81,7 +80,7 @@ class BaseRepository(Generic[CreateEntity, ReturnEntity, UpdateEntity], ABC):
                 )
             return self.return_entity.model_validate(data, from_attributes=True)
 
-    async def get_datas_by_data_ids(self, data_ids: List[int]) -> List[ReturnEntity]:
+    async def get_datas_by_data_ids(self, data_ids: list[int]) -> list[ReturnEntity]:
         if not data_ids:
             return []
         async with self.database.session() as session:
@@ -101,7 +100,7 @@ class BaseRepository(Generic[CreateEntity, ReturnEntity, UpdateEntity], ABC):
 
     async def get_datas_with_count(
         self, page: int, page_size: int
-    ) -> Tuple[List[ReturnEntity], int]:
+    ) -> tuple[list[ReturnEntity], int]:
         """데이터 조회와 카운트를 하나의 세션에서 처리하여 연결 풀 사용 최적화"""
         async with self.database.session() as session:
             # 데이터 조회

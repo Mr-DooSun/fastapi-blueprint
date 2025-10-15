@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from sqlalchemy import DateTime, Integer, String, func
 from sqlalchemy.orm import Mapped, mapped_column
 

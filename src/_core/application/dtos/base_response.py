@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-from typing import Generic, Optional, Type, TypeVar
+from typing import Generic, TypeVar
 
 from src._core.application.dtos.base_config import ApiConfig
 from src._core.domain.entities.entity import Entity
@@ -12,8 +11,8 @@ class PaginationInfo(ApiConfig):
     total_pages: int
     has_previous: bool
     has_next: bool
-    next_page: Optional[int] = None
-    previous_page: Optional[int] = None
+    next_page: int | None = None
+    previous_page: int | None = None
 
 
 class ExistsData(ApiConfig):
@@ -25,19 +24,19 @@ ReturnType = TypeVar("ReturnType")
 
 class BaseResponse(ApiConfig):
     @classmethod
-    def from_entity(cls: Type[ReturnType], entity: Entity) -> ReturnType:
+    def from_entity(cls: type[ReturnType], entity: Entity) -> ReturnType:
         return cls(**entity.model_dump())
 
 
 class SuccessResponse(ApiConfig, Generic[ReturnType]):
     success: bool = True
     message: str = "Request processed successfully"
-    data: Optional[ReturnType] = None
-    pagination: Optional[PaginationInfo] = None
+    data: ReturnType | None = None
+    pagination: PaginationInfo | None = None
 
 
 class ErrorResponse(ApiConfig):
     success: bool = False
     message: str = "Request failed"
-    error_code: Optional[str] = None
-    error_details: Optional[dict] = None
+    error_code: str | None = None
+    error_details: dict | None = None

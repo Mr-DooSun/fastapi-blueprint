@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 
@@ -323,7 +322,9 @@ def elements_docs(request: Request):
 
 
 @router.get(
-    "/docs-rapidoc", include_in_schema=False, description="RapiDoc - 빠르고 가벼운 API 문서"
+    "/docs-rapidoc",
+    include_in_schema=False,
+    description="RapiDoc - 빠르고 가벼운 API 문서",
 )
 def rapidoc_docs(request: Request):
     root_path = request.scope.get("root_path", "")

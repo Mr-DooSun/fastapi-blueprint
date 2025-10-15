@@ -1,44 +1,105 @@
+# 실행 순서: 자동 수정 → 체크만
+# stages로 분리: commit(자동수정), manual(수동 체크)
 repos:
-  - repo: https://github.com/pycqa/flake8
-    rev: 6.1.0
+  # ==================== STAGE: COMMIT (자동 실행) ====================
+  # 1. 기본 파일 검증 및 자동 수정
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
     hooks:
-      - id: flake8
-        exclude: ./migrations
-        args: ["--ignore=F841,E501,W503,E203"]
-        language_version: python3
+      - id: trailing-whitespace
+        exclude: ^migrations/
+        types: [python]
+      - id: end-of-file-fixer
+        exclude: ^migrations/
+        types: [python]
+      - id: check-yaml
+        args: ["--unsafe"]  # allow custom YAML tags
+      - id: check-json
+      - id: check-toml
+      - id: check-added-large-files
+        args: ["--maxkb=1000"]
+      - id: check-merge-conflict
+      - id: debug-statements
+        exclude: ^migrations/
+      - id: mixed-line-ending
+        args: ["--fix=lf"]
 
-  - repo: https://github.com/myint/autoflake
+  # 2. Python 구문 현대화 (자동 수정)
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.19.1
+    hooks:
+      - id: pyupgrade
+        args: ["--py312-plus"]
+        exclude: ^migrations/
+
+  # 3. 미사용 import/변수 제거 (자동 수정)
+  - repo: https://github.com/PyCQA/autoflake
     rev: v2.3.1
     hooks:
       - id: autoflake
-        exclude: ./migrations
+        exclude: ^migrations/
         args:
           - --in-place
           - --remove-unused-variables
           - --remove-all-unused-imports
           - --expand-star-imports
+          - --remove-duplicate-keys
 
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.4.0
-    hooks:
-      - id: trailing-whitespace
-        exclude: ./migrations
-      - id: end-of-file-fixer
-        exclude: ./migrations
-      - id: fix-encoding-pragma
-        exclude: ./migrations
-
-  - repo: https://github.com/psf/black
-    rev: 23.7.0
-    hooks:
-      - id: black
-        exclude: ./migrations
-        language_version: python3
-
-  - repo: https://github.com/pre-commit/mirrors-isort
-    rev: v5.10.0
+  # 4. Import 정렬 (자동 수정)
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
     hooks:
       - id: isort
-        exclude: ./migrations
-        language_version: python3
+        exclude: ^migrations/
         args: ["--profile", "black", "--filter-files"]
+
+  # 5. 코드 포맷팅 (자동 수정)
+  - repo: https://github.com/psf/black
+    rev: 24.10.0
+    hooks:
+      - id: black
+        exclude: ^migrations/
+        language_version: python3.12
+
+  # 6. 린팅 (체크만, 완화)
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.1.1
+    hooks:
+      - id: flake8
+        exclude: ^migrations/
+        args:
+          - --ignore=F841,E501,W503,E203,E402,F401,B008,B006,C901,SIM114,SIM910,SIM904
+          - --max-line-length=88
+          - --max-complexity=20
+          - --per-file-ignores=**/routers/*:B008,**/workflows/*:B006
+        additional_dependencies:
+          - flake8-bugbear
+          - flake8-comprehensions
+
+  # ==================== STAGE: MANUAL (수동 실행) ====================
+  # 타입 체킹: pre-commit run --hook-stage manual mypy
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.14.1
+    hooks:
+      - id: mypy
+        stages: [manual]
+        exclude: ^(migrations/|tests/|.*test\.py$|run_.*\.py$|force_.*\.py$)
+        args:
+          - --ignore-missing-imports
+          - --check-untyped-defs  # disallow에서 완화
+          - --warn-redundant-casts
+          - --no-implicit-optional
+        additional_dependencies:
+          - types-requests
+          - pydantic
+
+  # 보안 체크: pre-commit run --hook-stage manual bandit
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.8.0
+    hooks:
+      - id: bandit
+        stages: [manual]
+        exclude: ^(migrations/|tests/|.*_test\.py$)
+        args:
+          - -ll  # Low/Low severity만
+          - --skip=B113,B314,B413  # 알려진 이슈 무시 (timeout, xml, pycrypto)

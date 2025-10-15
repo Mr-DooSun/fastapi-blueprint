@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from dependency_injector import containers, providers
 
 from src.user.application.use_cases.users_use_case import UsersUseCase

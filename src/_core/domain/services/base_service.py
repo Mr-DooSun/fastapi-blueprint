@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 from abc import ABC
-from typing import Generic, List, Tuple, Type, TypeVar
+from typing import Generic, TypeVar
 
 from src._core.domain.entities.entity import Entity
 from src._core.infrastructure.repositories.base_repository import BaseRepository
@@ -15,9 +14,9 @@ class BaseService(Generic[CreateEntity, ReturnEntity, UpdateEntity], ABC):
         self,
         base_repository: BaseRepository,
         *,
-        create_entity: Type[CreateEntity],
-        return_entity: Type[ReturnEntity],
-        update_entity: Type[UpdateEntity],
+        create_entity: type[CreateEntity],
+        return_entity: type[ReturnEntity],
+        update_entity: type[UpdateEntity],
     ) -> None:
         self.base_repository = base_repository
         self.create_entity = create_entity
@@ -28,17 +27,17 @@ class BaseService(Generic[CreateEntity, ReturnEntity, UpdateEntity], ABC):
         return await self.base_repository.create_data(create_data=create_data)
 
     async def create_datas(
-        self, create_datas: List[CreateEntity]
-    ) -> List[ReturnEntity]:
+        self, create_datas: list[CreateEntity]
+    ) -> list[ReturnEntity]:
         return await self.base_repository.create_datas(create_datas=create_datas)
 
-    async def get_datas(self, page: int, page_size: int) -> List[ReturnEntity]:
+    async def get_datas(self, page: int, page_size: int) -> list[ReturnEntity]:
         return await self.base_repository.get_datas(page=page, page_size=page_size)
 
     async def get_data_by_data_id(self, data_id: int) -> ReturnEntity:
         return await self.base_repository.get_data_by_data_id(data_id=data_id)
 
-    async def get_datas_by_data_ids(self, data_ids: List[int]) -> List[ReturnEntity]:
+    async def get_datas_by_data_ids(self, data_ids: list[int]) -> list[ReturnEntity]:
         return await self.base_repository.get_datas_by_data_ids(data_ids=data_ids)
 
     async def count_datas(self) -> int:
@@ -46,7 +45,7 @@ class BaseService(Generic[CreateEntity, ReturnEntity, UpdateEntity], ABC):
 
     async def get_datas_with_count(
         self, page: int, page_size: int
-    ) -> Tuple[List[ReturnEntity], int]:
+    ) -> tuple[list[ReturnEntity], int]:
         return await self.base_repository.get_datas_with_count(
             page=page, page_size=page_size
         )

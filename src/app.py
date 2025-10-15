@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from fastapi import FastAPI
 
 from src._core.application.dtos.base_response import ErrorResponse

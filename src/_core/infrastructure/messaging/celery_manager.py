@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-from typing import Any, Dict
+from typing import Any
 
 from celery import Celery
 
@@ -12,7 +11,7 @@ class CeleryManager:
         self,
         task_name: str,
         args: tuple = None,
-        kwargs: Dict[str, Any] = None,
+        kwargs: dict[str, Any] = None,
         **options,
     ):
         return self.celery_app.send_task(task_name, args=args, kwargs=kwargs, **options)

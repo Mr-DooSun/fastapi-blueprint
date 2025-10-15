@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
-from typing import List
-
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, Query
 
@@ -50,14 +45,14 @@ async def create_user(
 @router.post(
     "/users",
     summary="유저 생성 (복수)",
-    response_model=SuccessResponse[List[CoreUsersResponse]],
+    response_model=SuccessResponse[list[CoreUsersResponse]],
     response_model_exclude={"pagination"},
 )
 @inject
 async def create_users(
-    create_datas: List[CoreCreateUsersRequest],
+    create_datas: list[CoreCreateUsersRequest],
     user_use_case: UsersUseCase = Depends(Provide[UserContainer.users_use_case]),
-) -> SuccessResponse[List[CoreUsersResponse]]:
+) -> SuccessResponse[list[CoreUsersResponse]]:
     entities = dtos_to_entities(create_datas, CoreCreateUsersEntity)
     datas = await user_use_case.create_datas(create_datas=entities)
     return SuccessResponse(data=entities_to_dtos(datas, CoreUsersResponse))
@@ -69,14 +64,14 @@ async def create_users(
 @router.get(
     "/users",
     summary="유저 정보 모두 조회",
-    response_model=SuccessResponse[List[CoreUsersResponse]],
+    response_model=SuccessResponse[list[CoreUsersResponse]],
 )
 @inject
 async def get_users(
     page: int = 1,
     page_size: int = Query(10, alias="pageSize"),
     user_use_case: UsersUseCase = Depends(Provide[UserContainer.users_use_case]),
-) -> SuccessResponse[List[CoreUsersResponse]]:
+) -> SuccessResponse[list[CoreUsersResponse]]:
     datas, pagination = await user_use_case.get_datas(page=page, page_size=page_size)
     return SuccessResponse(
         data=entities_to_dtos(datas, CoreUsersResponse), pagination=pagination
@@ -108,14 +103,14 @@ async def get_user_by_user_id(
 @router.post(
     "/users/by-ids",
     summary="ID 리스트로 유저 여러 명 조회",
-    response_model=SuccessResponse[List[CoreUsersResponse]],
+    response_model=SuccessResponse[list[CoreUsersResponse]],
     response_model_exclude={"pagination"},
 )
 @inject
 async def get_users_by_ids(
     payload: IdListDto,
     user_use_case: UsersUseCase = Depends(Provide[UserContainer.users_use_case]),
-) -> SuccessResponse[List[CoreUsersResponse]]:
+) -> SuccessResponse[list[CoreUsersResponse]]:
     datas = await user_use_case.get_datas_by_data_ids(payload=payload)
     return SuccessResponse(data=entities_to_dtos(datas, CoreUsersResponse))
 

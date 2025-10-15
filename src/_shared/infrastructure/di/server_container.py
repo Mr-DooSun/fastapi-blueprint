@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from dependency_injector import containers, providers
 
 from src._core.infrastructure.di.core_container import CoreContainer

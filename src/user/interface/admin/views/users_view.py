@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from sqladmin import ModelView
 from sqlalchemy.orm import class_mapper
 

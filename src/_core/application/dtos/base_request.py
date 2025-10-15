@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-from typing import List, Type, TypeVar
+from typing import TypeVar
 
 from src._core.application.dtos.base_config import ApiConfig
 from src._core.domain.entities.entity import Entity
@@ -8,9 +7,9 @@ EntityType = TypeVar("EntityType", bound=Entity)
 
 
 class BaseRequest(ApiConfig):
-    def to_entity(self, entity_cls: Type[EntityType]) -> EntityType:
+    def to_entity(self, entity_cls: type[EntityType]) -> EntityType:
         return entity_cls(**self.model_dump())
 
 
 class IdListDto(BaseRequest):
-    ids: List[int]
+    ids: list[int]
