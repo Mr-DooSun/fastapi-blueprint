@@ -17,7 +17,6 @@ dependencies = [
     "gunicorn>=23.0.0",
     "httpx>=0.28.1",
     "locust>=2.37.11",
-    "minio>=7.2.15",
     "pre-commit>=4.2.0",
     "pydantic-settings>=2.10.1",
     "pymysql>=1.1.1",

@@ -1,14 +1,11 @@
 from dependency_injector import containers, providers
-from minio import Minio
 
-from src._core.domain.services.file_storage_service import FileStorageService
-from src._core.domain.services.minio_service import MinioService
 from src._core.infrastructure.database.database import Database
 from src._core.infrastructure.http.http_client import HttpClient
 from src._core.infrastructure.messaging.celery_factory import create_celery_app
 from src._core.infrastructure.messaging.celery_manager import CeleryManager
-from src._core.infrastructure.storage.s3_client import S3Client
-from src._core.infrastructure.storage.s3_storage import S3Storage
+from src._core.infrastructure.storage.object_storage import ObjectStorage
+from src._core.infrastructure.storage.object_storage_client import ObjectStorageClient
 
 
 class CoreContainer(containers.DeclarativeContainer):
@@ -42,36 +39,25 @@ class CoreContainer(containers.DeclarativeContainer):
     # Storage
     #########################################################
 
-    minio_client = providers.Singleton(
-        Minio,
-        endpoint=config.minio.endpoint,
-        access_key=config.minio.access_key,
-        secret_key=config.minio.secret_key,
-        secure=False,  # HTTPS가 아닌 경우 False 설정
-    )
+    # MinIO용 설정 (코드는 동일, 설정만 변경)
+    # minio_client = ObjectStorageClient(
+    #     access_key="minioadmin",
+    #     secret_access_key="minioadmin",
+    #     endpoint_url="http://localhost:9000"
+    # )
 
-    minio_service = providers.Factory(
-        MinioService,
-        minio_client=minio_client,
-        bucket_name=config.minio.bucket_name,
-    )
-
+    # AWS S3용 설정
     s3_client = providers.Singleton(
-        S3Client,
-        aws_access_key_id=config.s3.access_key,
-        aws_secret_access_key=config.s3.secret_key,
+        ObjectStorageClient,
+        access_key=config.s3.access_key,
+        secret_access_key=config.s3.secret_key,
         region_name=config.s3.region,
     )
 
     s3_storage = providers.Factory(
-        S3Storage,
-        s3_client=s3_client,
+        ObjectStorage,
+        storage_client=s3_client,
         bucket_name=config.s3.bucket_name,
-    )
-
-    file_storage_service = providers.Factory(
-        FileStorageService,
-        s3_storage=s3_storage,
     )
 
     #########################################################
