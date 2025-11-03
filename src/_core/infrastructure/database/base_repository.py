@@ -28,7 +28,7 @@ class BaseRepository(Generic[CreateEntity, ReturnEntity, UpdateEntity], ABC):
         self.return_entity = return_entity
         self.update_entity = update_entity
 
-    async def create_data(self, create_data: CreateEntity) -> ReturnEntity:
+    async def insert_data(self, create_data: CreateEntity) -> ReturnEntity:
         async with self.database.session() as session:
             data = self.model(**create_data.model_dump(exclude_none=True))
             session.add(data)
@@ -36,7 +36,7 @@ class BaseRepository(Generic[CreateEntity, ReturnEntity, UpdateEntity], ABC):
             await session.refresh(data)
             return self.return_entity.model_validate(data, from_attributes=True)
 
-    async def create_datas(
+    async def insert_datas(
         self, create_datas: list[CreateEntity]
     ) -> list[ReturnEntity]:
         async with self.database.session() as session:
@@ -52,7 +52,7 @@ class BaseRepository(Generic[CreateEntity, ReturnEntity, UpdateEntity], ABC):
                 for data in datas
             ]
 
-    async def get_datas(self, page: int, page_size: int) -> list[ReturnEntity]:
+    async def select_datas(self, page: int, page_size: int) -> list[ReturnEntity]:
         async with self.database.session() as session:
             result = await session.execute(
                 select(self.model).offset((page - 1) * page_size).limit(page_size)
@@ -68,7 +68,7 @@ class BaseRepository(Generic[CreateEntity, ReturnEntity, UpdateEntity], ABC):
                 for data in datas
             ]
 
-    async def get_data_by_data_id(self, data_id: int) -> ReturnEntity:
+    async def select_data_by_id(self, data_id: int) -> ReturnEntity:
         async with self.database.session() as session:
             result = await session.execute(
                 select(self.model).filter(self.model.id == data_id)
@@ -80,7 +80,7 @@ class BaseRepository(Generic[CreateEntity, ReturnEntity, UpdateEntity], ABC):
                 )
             return self.return_entity.model_validate(data, from_attributes=True)
 
-    async def get_datas_by_data_ids(self, data_ids: list[int]) -> list[ReturnEntity]:
+    async def select_datas_by_ids(self, data_ids: list[int]) -> list[ReturnEntity]:
         if not data_ids:
             return []
         async with self.database.session() as session:
@@ -93,12 +93,7 @@ class BaseRepository(Generic[CreateEntity, ReturnEntity, UpdateEntity], ABC):
                 for data in datas
             ]
 
-    async def count_datas(self) -> int:
-        async with self.database.session() as session:
-            result = await session.execute(select(func.count()).select_from(self.model))
-            return result.scalar_one()
-
-    async def get_datas_with_count(
+    async def select_datas_with_count(
         self, page: int, page_size: int
     ) -> tuple[list[ReturnEntity], int]:
         """데이터 조회와 카운트를 하나의 세션에서 처리하여 연결 풀 사용 최적화"""
@@ -148,8 +143,15 @@ class BaseRepository(Generic[CreateEntity, ReturnEntity, UpdateEntity], ABC):
                 select(self.model).filter(self.model.id == data_id)
             )
             data = result.scalar_one_or_none()
-            if data:
-                await session.delete(data)
-                await session.commit()
-                return True
-            return False
+            if not data:
+                raise BaseCustomException(
+                    status_code=404, message=f"Data with ID [ {data_id} ] not found"
+                )
+            await session.delete(data)
+            await session.commit()
+            return True
+
+    async def count_datas(self) -> int:
+        async with self.database.session() as session:
+            result = await session.execute(select(func.count()).select_from(self.model))
+            return result.scalar_one()
