@@ -1,212 +1,120 @@
-# 🏗️ FastAPI Enterprise Layered Architecture
+# 🏗️ FastAPI Layered Architecture
 
 [![Python](https://img.shields.io/badge/Python-3.12.9+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green.svg)](https://fastapi.tiangolo.com)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-## 📋 개요
+> **"반복되는 코드 작성을 멈추고, 비즈니스 로직에만 집중하세요."**
 
-**엔터프라이즈급 범용 백엔드 아키텍처 템플릿**
+Domain-Driven Design(DDD) 기반의 **제네릭 4계층 아키텍처**로 구현한 FastAPI 엔터프라이즈 백엔드 템플릿입니다.
 
-이 프로젝트는 **Domain-Driven Design (DDD)**, **Clean Architecture**, **Layered Architecture** 원칙을 완벽하게 구현한 **FastAPI 기반 엔터프라이즈 백엔드 아키텍처**입니다. 
+---
 
-확장성, 유지보수성, 테스트 용이성을 최우선으로 설계되었으며, **제네릭 베이스 클래스**와 **의존성 주입 패턴**을 통해 반복적인 코드 작성을 최소화하고 일관된 코드베이스를 유지할 수 있도록 설계되었습니다.
+## 📖 목차
 
-### 🎯 핵심 설계 철학
+- [왜 이 프로젝트를 만들었나?](#-왜-이-프로젝트를-만들었나)
+- [핵심 문제와 해결책](#-핵심-문제와-해결책)
+- [주요 특징](#-주요-특징)
+- [아키텍처 개요](#-아키텍처-개요)
+- [빠른 시작](#-빠른-시작)
+- [새 도메인 추가하기](#-새-도메인-추가하기)
+- [활용 방법 및 모범 사례](#-활용-방법-및-모범-사례)
+- [기술 스택](#-기술-스택)
+- [프로젝트 구조](#-프로젝트-구조)
+- [라이선스](#-라이선스)
 
-**"비즈니스 로직에 집중하라. 인프라는 우리가 처리한다."**
+---
 
-1. **제네릭 베이스 클래스**: 모든 CRUD 작업을 위한 재사용 가능한 기반 제공
-2. **완전한 계층 분리**: Domain ↔ Application ↔ Infrastructure ↔ Interface
-3. **의존성 역전**: 도메인이 인프라에 의존하지 않는 구조
-4. **타입 안정성**: Pydantic과 TypeVar를 활용한 강력한 타입 힌팅
-5. **모놀리식 ↔ 마이크로서비스**: 단일 실행 또는 독립 서비스로 유연하게 전환
+## 💡 왜 이 프로젝트를 만들었나?
 
-## 🏗️ 아키텍처 설계
+### 문제: FastAPI 프로젝트의 현실
 
-### 4계층 아키텍처 (Layered Architecture)
-
-본 프로젝트는 **DDD의 4계층 구조**를 엄격하게 준수합니다:
-
-```
-┌──────────────────────────────────────────────────────────────────┐
-│                  Interface Layer (Adapters)                      │
-│  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐  │
-│  │   Router   │  │   Admin    │  │  Consumer  │  │ Bootstrap  │  │
-│  │  (REST)    │  │ (SQLAdmin) │  │  (Celery)  │  │   (Wire)   │  │
-│  └────────────┘  └────────────┘  └────────────┘  └────────────┘  │
-└────────────────────────┬─────────────────────────────────────────┘
-                         │ DTO (Request/Response)
-┌────────────────────────┴─────────────────────────────────────────┐
-│                     Application Layer                            │
-│  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐  │
-│  │  UseCase   │  │    DTO     │  │ Messaging  │  │   Router   │  │
-│  │ (Orchestr) │  │ (Transfer) │  │  (Celery)  │  │  (Common)  │  │
-│  └────────────┘  └────────────┘  └────────────┘  └────────────┘  │
-└────────────────────────┬─────────────────────────────────────────┘
-                         │ Entity
-┌────────────────────────┴─────────────────────────────────────────┐
-│                      Domain Layer                                │
-│  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐  │
-│  │   Entity   │  │  Service   │  │    Enum    │  │ Exception  │  │
-│  │ (Pydantic) │  │ (Business) │  │ (Constants)│  │  (Custom)  │  │
-│  └────────────┘  └────────────┘  └────────────┘  └────────────┘  │
-└────────────────────────┬─────────────────────────────────────────┘
-                         │ Entity
-┌────────────────────────┴─────────────────────────────────────────┐
-│                   Infrastructure Layer                           │
-│  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐  │
-│  │ Repository │  │  Database  │  │    HTTP    │  │  Gateway   │  │
-│  │   (CRUD)   │  │   (MySQL)  │  │  (aiohttp) │  │ (External) │  │
-│  └────────────┘  └────────────┘  └────────────┘  └────────────┘  │
-│  ┌────────────┐  ┌────────────┐  ┌────────────┐                  │
-│  │  Storage   │  │  Messaging │  │     DI     │                  │
-│  │(MinIO/S3)  │  │  (Celery)  │  │ (Container)│                  │
-│  └────────────┘  └────────────┘  └────────────┘                  │
-└──────────────────────────────────────────────────────────────────┘
-```
-
-### 데이터 흐름과 의존성 방향
-
-**요청 흐름 (Request Flow)**
-```
-HTTP Request 
-    → Router (Interface)
-        → UseCase (Application) 
-            → Service (Domain)
-                → Repository (Infrastructure)
-                    → Database/External API
-```
-
-**응답 흐름 (Response Flow)**
-```
-Database Model 
-    → Entity (Domain)
-        → DTO (Application)
-            → JSON Response (Interface)
-```
-
-**의존성 방향 (Dependency Direction)**: **내부로만 향함 (의존성 역전 원칙)**
-```
-Interface → Application → Domain ← Infrastructure
-```
-
-> **핵심**: Domain Layer는 어떤 외부 계층에도 의존하지 않습니다. Infrastructure는 Domain의 인터페이스를 구현합니다.
-
-## 📁 프로젝트 구조
-
-### 전체 디렉토리 구조
-
-```
-fastapi-layered-architecture/
-├── src/
-│   ├── _core/                    # 🎯 핵심 인프라 (모든 도메인이 공유)
-│   │   ├── application/          # Application Layer
-│   │   │   ├── dtos/            # DTO 베이스 클래스
-│   │   │   │   ├── base_request.py   # BaseRequest
-│   │   │   │   └── base_response.py  # SuccessResponse, ErrorResponse
-│   │   │   ├── routers/         # 공통 라우터
-│   │   │   │   └── api/
-│   │   │   │       ├── health_check_router.py
-│   │   │   │       └── docs_router.py  # 다중 문서 UI
-│   │   │   └── use_cases/
-│   │   │       └── base_use_case.py  # Generic CRUD UseCase
-│   │   ├── domain/              # Domain Layer
-│   │   │   ├── entities/
-│   │   │   │   └── entity.py    # Entity 베이스 (Pydantic ABC)
-│   │   │   └── services/
-│   │   │       ├── base_service.py    # Generic CRUD Service
-│   │   │       ├── minio_service.py   # MinIO 스토리지
-│   │   │       └── s3_service.py      # AWS S3 스토리지
-│   │   ├── infrastructure/      # Infrastructure Layer
-│   │   │   ├── database/
-│   │   │   │   └── database.py  # DB 연결/세션 관리 (aiomysql)
-│   │   │   ├── http/
-│   │   │   │   └── http_client.py  # HTTP 연결 풀 (aiohttp)
-│   │   │   ├── messaging/
-│   │   │   │   ├── celery_factory.py   # Celery 앱 생성
-│   │   │   │   └── celery_manager.py   # Task 관리
-│   │   │   ├── repositories/
-│   │   │   │   └── base_repository.py  # Generic CRUD Repository
-│   │   │   ├── gateways/
-│   │   │   │   └── example_gateway.py  # 외부 API Gateway 예시
-│   │   │   └── di/
-│   │   │       └── core_container.py   # Core DI Container
-│   │   ├── middleware/
-│   │   │   └── exception_middleware.py  # 전역 예외 처리
-│   │   ├── exceptions/
-│   │   │   └── base_exception.py       # 커스텀 예외
-│   │   ├── common/             # 유틸리티
-│   │   │   ├── pagination.py
-│   │   │   └── dto_utils.py
-│   │   └── config.py          # 설정 관리 (Pydantic Settings)
-│   │
-│   ├── _shared/                 # 🔗 공유 컴포넌트
-│   │   └── infrastructure/
-│   │       └── di/
-│   │           └── server_container.py  # 통합 DI Container
-│   │
-│   ├── user/                    # 👤 User 도메인 (완전한 구현 예시)
-│   │   ├── domain/
-│   │   │   ├── entities/
-│   │   │   │   └── user_entity.py      # User Entity
-│   │   │   └── services/
-│   │   │       └── user_service.py     # User Service
-│   │   ├── application/
-│   │   │   └── use_cases/
-│   │   │       └── user_use_case.py    # User UseCase
-│   │   ├── infrastructure/
-│   │   │   ├── database/
-│   │   │   │   └── models/
-│   │   │   │       └── user_model.py   # SQLAlchemy Model
-│   │   │   ├── repositories/
-│   │   │   │   └── user_repository.py  # User Repository
-│   │   │   └── di/
-│   │   │       └── user_container.py    # User DI Container
-│   │   ├── interface/          # Interface Layer (Adapters)
-│   │   │   ├── server/         # REST Server
-│   │   │   │   ├── routers/
-│   │   │   │   │   └── user_router.py
-│   │   │   │   ├── dtos/
-│   │   │   │   │   └── user_dto.py  # Request/Response DTO
-│   │   │   │   └── bootstrap/
-│   │   │   │       └── user_bootstrap.py
-│   │   │   ├── admin/          # SQLAdmin Views
-│   │   │   │   └── views/
-│   │   │   │       └── user_view.py
-│   │   │   └── consumer/       # Celery Consumers
-│   │   │       └── tasks/
-│   │   └── app.py              # User 마이크로서비스 진입점
-│   │
-│   ├── app.py                   # 🚀 모놀리식 앱 진입점
-│   └── bootstrap.py             # 앱 초기화 및 설정
-│
-├── migrations/                  # Alembic DB 마이그레이션
-│   ├── env.py
-│   └── versions/
-├── _docker/                     # Docker 설정
-│   └── docker.Dockerfile
-├── _env/                        # 환경 변수 파일
-│   ├── local.env.example
-│   └── local.env
-├── config.yml                   # 설정 파일 (DI Container용)
-├── pyproject.toml               # 의존성 관리
-├── alembic.ini                  # Alembic 설정
-├── docker-compose.yml           # Docker Compose
-├── run_server_local.py          # 모놀리식 서버 실행
-└── run_microservice.py          # 마이크로서비스 실행
-```
-
-### 핵심 아키텍처 컴포넌트
-
-#### 1️⃣ 제네릭 베이스 클래스 시스템
-
-모든 CRUD 작업을 자동화하는 **3계층 제네릭 시스템**:
+FastAPI는 빠르고 강력한 프레임워크지만, 실제 엔터프라이즈 프로젝트에서는 다음과 같은 문제들이 반복됩니다:
 
 ```python
-# 타입 파라미터: [CreateEntity, ReturnEntity, UpdateEntity]
+# ❌ 전형적인 FastAPI 코드 - 반복되는 패턴
+@app.post("/user")
+async def create_user(user: UserCreate):
+    try:
+        db = get_db()
+        new_user = User(**user.dict())
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
+        return {"success": True, "data": new_user}
+    except Exception as e:
+        db.rollback()
+        return {"success": False, "error": str(e)}
+    finally:
+        db.close()
 
+@app.post("/product")  # 똑같은 패턴 반복!
+async def create_product(product: ProductCreate):
+    try:
+        db = get_db()
+        new_product = Product(**product.dict())
+        db.add(new_product)
+        db.commit()
+        db.refresh(new_product)
+        return {"success": True, "data": new_product}
+    except Exception as e:
+        db.rollback()
+        return {"success": False, "error": str(e)}
+    finally:
+        db.close()
+
+# 계속 반복... 😫
+```
+
+**이런 문제들이 있었습니다:**
+
+1. **반복되는 CRUD 코드** - 도메인마다 동일한 코드를 100줄씩 작성
+2. **일관성 없는 구조** - 팀원마다 다른 스타일로 작성
+3. **테스트의 어려움** - 강결합으로 인한 Mock 생성의 어려움
+4. **확장성 문제** - 프로젝트가 커질수록 유지보수 비용 폭증
+5. **비즈니스 로직과 인프라의 혼재** - 관심사 분리 실패
+
+### 해결책: 제네릭 베이스 클래스 + 계층형 아키텍처
+
+이 프로젝트는 **"한 번만 작성하고, 계속 재사용하자"**는 철학으로 만들어졌습니다.
+
+```python
+# ✅ 이 프로젝트의 접근 방식 - 제네릭으로 추상화
+class BaseRepository(Generic[CreateEntity, ReturnEntity, UpdateEntity]):
+    async def insert_data(self, entity: CreateEntity) -> ReturnEntity:
+        # 모든 CRUD 로직이 여기에 한 번만 작성됨
+        ...
+
+# 새 도메인 추가는 단 5줄!
+class UserRepository(BaseRepository[CreateUserEntity, UserEntity, UpdateUserEntity]):
+    def __init__(self, database: Database):
+        super().__init__(database=database, model=UserModel, ...)
+    # 끝! 모든 CRUD가 자동으로 제공됨
+```
+
+---
+
+## 🎯 핵심 문제와 해결책
+
+| 문제 | 일반 FastAPI | 이 프로젝트 (해결책) |
+|------|-------------|-------------------|
+| **CRUD 반복** | 도메인마다 100줄+ 작성 | 제네릭 베이스 클래스 상속 (5줄) |
+| **일관성** | 팀원마다 다른 스타일 | 강제된 계층 구조 |
+| **테스트** | Mock 생성 어려움 | 의존성 주입으로 쉬운 Mock |
+| **확장성** | 스파게티 코드 | 도메인 독립성 보장 |
+| **유지보수** | 수정 시 전체 영향 | 계층 분리로 영향 최소화 |
+| **학습 곡선** | 낮음 (빠른 시작) | 높음 (하지만 장기적 이득) |
+
+---
+
+## ✨ 주요 특징
+
+### 1️⃣ **제네릭 베이스 클래스 시스템** (핵심!)
+
+3계층 제네릭으로 **모든 CRUD를 자동화**:
+
+```python
 BaseRepository[CreateEntity, ReturnEntity, UpdateEntity]
     ↓ 사용
 BaseService[CreateEntity, ReturnEntity, UpdateEntity]
@@ -214,169 +122,153 @@ BaseService[CreateEntity, ReturnEntity, UpdateEntity]
 BaseUseCase[CreateEntity, ReturnEntity, UpdateEntity]
 ```
 
-**구현 예시 (User 도메인)**:
-```python
-# Repository
-class UserRepository(
-    BaseRepository[CoreCreateUserEntity, CoreUserEntity, CoreUpdateUserEntity]
-):
-    def __init__(self, database: Database):
-        super().__init__(
-            database=database,
-            model=UserModel,  # SQLAlchemy Model
-            create_entity=CoreCreateUserEntity,
-            return_entity=CoreUserEntity,
-            update_entity=CoreUpdateUserEntity,
-        )
-    # 추가 메서드만 구현하면 됨 (기본 CRUD는 자동)
+**새 도메인 추가 비용**:
+- 일반 FastAPI: **100+ 줄** (CRUD, 예외처리, 페이지네이션 등)
+- 이 프로젝트: **~45줄** (Entity, Repository, Service, UseCase, Router)
 
-# Service
-class UserService(
-    BaseService[CoreCreateUserEntity, CoreUserEntity, CoreUpdateUserEntity]
-):
-    def __init__(self, user_repository: UserRepository):
-        super().__init__(
-            base_repository=user_repository,
-            create_entity=CoreCreateUserEntity,
-            return_entity=CoreUserEntity,
-            update_entity=CoreUpdateUserEntity,
-        )
-    # 비즈니스 로직 추가
+**자동 제공되는 메서드**:
+- ✅ `create_data` - 단일 생성
+- ✅ `create_datas` - 복수 생성
+- ✅ `get_datas` - 페이지네이션 조회
+- ✅ `get_data_by_data_id` - ID 조회
+- ✅ `get_datas_by_data_ids` - 복수 ID 조회
+- ✅ `update_data_by_data_id` - 수정
+- ✅ `delete_data_by_data_id` - 삭제
 
-# UseCase
-class UserUseCase(
-    BaseUseCase[CoreCreateUserEntity, CoreUserEntity, CoreUpdateUserEntity]
-):
-    def __init__(self, user_service: UserService):
-        super().__init__(
-            base_service=user_service,
-            create_entity=CoreCreateUserEntity,
-            return_entity=CoreUserEntity,
-            update_entity=CoreUpdateUserEntity,
-        )
-    # 애플리케이션 로직 조율
+### 2️⃣ **DDD 기반 4계층 아키텍처**
+
+```
+┌─────────────────────────────────────────────────┐
+│  Interface Layer (REST API, Admin, Consumer)    │  ← 외부와의 접점
+├─────────────────────────────────────────────────┤
+│  Application Layer (UseCase - 조율)             │  ← 비즈니스 흐름
+├─────────────────────────────────────────────────┤
+│  Domain Layer (Entity + Service - 핵심 로직)    │  ← 비즈니스 규칙
+├─────────────────────────────────────────────────┤
+│  Infrastructure Layer (Repository, DB, HTTP)    │  ← 기술 구현
+└─────────────────────────────────────────────────┘
+
+의존성 방향: Interface → Application → Domain ← Infrastructure
+                                        ↑
+                                   (의존성 역전)
 ```
 
-**자동으로 제공되는 메서드**:
-- `create_data(create_data)` - 단일 생성
-- `create_datas(create_datas)` - 복수 생성
-- `get_datas(page, page_size)` - 페이지네이션 조회
-- `get_data_by_data_id(data_id)` - ID로 조회
-- `get_datas_by_data_ids(data_ids)` - 복수 ID 조회
-- `update_data_by_data_id(data_id, update_data)` - 수정
-- `delete_data_by_data_id(data_id)` - 삭제
+**계층별 책임**:
+- **Interface**: REST API 라우터, DTO 변환, Admin 뷰, Celery Consumer
+- **Application**: UseCase (여러 Service 조율), 페이지네이션 처리
+- **Domain**: Entity (Pydantic), Service (비즈니스 로직)
+- **Infrastructure**: Repository (데이터 액세스), Database, HTTP Client, Storage
 
-#### 2️⃣ 의존성 주입 컨테이너
+### 3️⃣ **의존성 주입 (DI) 컨테이너**
 
-**계층적 DI 구조**:
 ```python
 ServerContainer (통합)
-    ├── CoreContainer (공통 인프라)
-    │   ├── Database (MySQL)
-    │   ├── HttpClient (aiohttp)
-    │   ├── MinioService (스토리지)
-    │   ├── S3Service (AWS S3)
-    │   └── CeleryManager (메시징)
-    └── UserContainer (도메인별)
-        ├── UserRepository
-        ├── UserService
-        └── UserUseCase
+ ├── CoreContainer
+ │   ├── Database (MySQL 비동기)
+ │   ├── HttpClient (aiohttp 연결 풀)
+ │   ├── ObjectStorage (S3/MinIO)
+ │   └── CeleryManager (메시징)
+ └── UserContainer (도메인별)
+     ├── UserRepository
+     ├── UserService
+     └── UserUseCase
 ```
 
-**Router에서 의존성 주입 사용**:
+**장점**:
+- 의존성 자동 해결
+- 테스트 시 Mock 교체 용이
+- 순환 의존성 방지
+
+### 4️⃣ **모놀리식 ↔ 마이크로서비스 전환**
+
+```bash
+# 개발: 모놀리식 (간단한 디버깅)
+python run_server_local.py --env local
+
+# 프로덕션: 마이크로서비스 (독립 배포/확장)
+python run_microservice.py --env prod
+```
+
+**코드 변경 없이** 실행 방식만 변경 가능!
+
+### 5️⃣ **비동기 처리 + 연결 풀 최적화**
+
+- **Database**: aiomysql (비동기) + 연결 풀 (pool_size=10)
+- **HTTP Client**: aiohttp + TCPConnector (재사용)
+- **Storage**: aioboto3 (비동기 S3/MinIO)
+
+### 6️⃣ **타입 안정성 + 자동 문서화**
+
+- Pydantic 2.10+ 기반 Entity/DTO
+- TypeVar를 활용한 제네릭 타입 힌팅
+- FastAPI 자동 OpenAPI 문서 (5가지 UI 제공)
+
+---
+
+## 🏗️ 아키텍처 개요
+
+### 데이터 흐름 (Request → Response)
+
+```
+HTTP Request (JSON)
+    ↓
+Router (Interface Layer)
+    ↓ DTO → Entity 변환
+UseCase (Application Layer)
+    ↓ 비즈니스 조율
+Service (Domain Layer)
+    ↓ 비즈니스 로직
+Repository (Infrastructure Layer)
+    ↓ SQL 실행
+Database (MySQL)
+    ↓
+SQLAlchemy Model
+    ↓ Entity 변환
+Service → UseCase → Router
+    ↓ Entity → DTO 변환
+HTTP Response (JSON)
+```
+
+### 예제: User 생성 흐름
+
 ```python
+# 1. Router (Interface)
 @router.post("/user")
-@inject  # dependency-injector 데코레이터
+@inject
 async def create_user(
-    create_data: CoreCreateUserRequest,
-    user_use_case: UserUseCase = Depends(
-        Provide[UserContainer.user_use_case]  # 자동 주입
-    ),
+    item: CoreCreateUserRequest,  # DTO
+    user_use_case: UserUseCase = Depends(Provide[UserContainer.user_use_case]),
 ):
-    # 모든 의존성이 자동으로 해결됨
-    data = await user_use_case.create_data(...)
-    return SuccessResponse(data=...)
+    # 2. DTO → Entity
+    entity = item.to_entity(CoreCreateUserEntity)
+    
+    # 3. UseCase 호출
+    data = await user_use_case.create_data(entity=entity)
+    
+    # 4. Entity → DTO
+    return SuccessResponse(data=CoreUserResponse.from_entity(data))
+
+# UseCase → Service → Repository → Database 자동 처리!
 ```
 
-## 🔧 기술 스택
-
-### 핵심 프레임워크 & 라이브러리
-
-| 카테고리 | 기술 | 버전 | 용도 |
-|---------|------|------|------|
-| **Web Framework** | FastAPI | 0.115+ | 고성능 비동기 웹 프레임워크 |
-| **ASGI Server** | Uvicorn | 0.34+ | 개발 서버 |
-| **WSGI Server** | Gunicorn | 23.0+ | 프로덕션 서버 |
-| **Validation** | Pydantic | 2.10+ | 데이터 검증 및 설정 관리 |
-| **ORM** | SQLAlchemy | 2.0+ | 데이터베이스 ORM (async 지원) |
-| **Migration** | Alembic | 1.15+ | 데이터베이스 마이그레이션 |
-| **DI** | dependency-injector | 4.46+ | 의존성 주입 컨테이너 |
-
-### 데이터베이스 & 스토리지
-
-| 카테고리 | 기술 | 용도 |
-|---------|------|------|
-| **RDBMS** | MySQL 8.0 | 메인 관계형 데이터베이스 |
-| **Driver** | aiomysql | 비동기 MySQL 드라이버 |
-| **Sync Driver** | PyMySQL | 동기 MySQL 드라이버 (마이그레이션) |
-| **Object Storage** | MinIO | S3 호환 오브젝트 스토리지 |
-| **Cloud Storage** | AWS S3 | 클라우드 스토리지 (선택적) |
-
-### 비동기 & 메시징
-
-| 카테고리 | 기술 | 용도 |
-|---------|------|------|
-| **HTTP Client** | aiohttp | 비동기 HTTP 클라이언트 (연결 풀) |
-| **Task Queue** | Celery | 비동기 작업 큐 |
-| **Message Broker** | AWS SQS | 메시지 브로커 (Celery backend) |
-
-### 개발 도구 & 품질
-
-| 카테고리 | 기술 | 용도 |
-|---------|------|------|
-| **Code Formatter** | Black | 코드 포매팅 |
-| **Import Sorter** | isort | Import 정렬 |
-| **Linter** | Flake8 | 코드 린팅 |
-| **Type Checker** | mypy | 타입 체킹 (수동) |
-| **Security** | Bandit | 보안 취약점 검사 (수동) |
-| **Pre-commit** | pre-commit | Git hook 자동화 |
-| **Admin Panel** | SQLAdmin | 데이터베이스 관리 UI |
-| **Load Testing** | Locust | 부하 테스트 |
-
-### 인프라 & 배포
-
-| 카테고리 | 기술 | 용도 |
-|---------|------|------|
-| **Containerization** | Docker | 컨테이너화 |
-| **Orchestration** | Docker Compose | 로컬 개발 환경 |
-| **Package Manager** | UV | 빠른 Python 패키지 관리 |
+---
 
 ## 🚀 빠른 시작
 
 ### 사전 요구사항
 
 - Python 3.12.9+
-- MySQL 8.0+ (또는 Docker)
-- MinIO (선택적, 파일 스토리지 사용 시)
-- UV 패키지 매니저 (권장) 또는 pip
+- MySQL 8.0+
+- UV (권장) 또는 pip
 
-### 설치 및 실행
-
-#### 1️⃣ 프로젝트 클론
+### 1️⃣ 프로젝트 클론 및 설치
 
 ```bash
+# 클론
 git clone <repository-url>
 cd fastapi-layered-architecture
-```
 
-#### 2️⃣ Python 가상 환경 및 의존성 설치
-
-**옵션 A: UV 사용 (권장 - 빠름)**
-```bash
-# UV 설치 (없는 경우)
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# 가상환경 생성 및 활성화
+# 가상환경 생성 (UV 사용)
 uv venv --python 3.12.9
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 
@@ -384,24 +276,17 @@ source .venv/bin/activate  # Windows: .venv\Scripts\activate
 uv pip install -e .
 ```
 
-**옵션 B: pip 사용**
-```bash
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -e .
-```
-
-#### 3️⃣ 환경 변수 설정
+### 2️⃣ 환경변수 설정
 
 ```bash
 # 예제 파일 복사
 cp _env/local.env.example _env/local.env
 
-# 환경 변수 편집 (필수)
+# 환경변수 편집
 nano _env/local.env
 ```
 
-**필수 환경 변수**:
+**필수 환경변수**:
 ```env
 ENV=local
 DATABASE_USER=root
@@ -409,216 +294,48 @@ DATABASE_PASSWORD=password
 DATABASE_HOST=localhost
 DATABASE_PORT=3306
 DATABASE_NAME=fastapi_db
-MINIO_HOST=localhost
-MINIO_PORT=9000
-MINIO_ACCESS_KEY=minioadmin
-MINIO_SECRET_KEY=minioadmin
-MINIO_BUCKET_NAME=test-bucket
-AWS_SQS_REGION=ap-northeast-2
-AWS_SQS_ACCESS_KEY=your_access_key
-AWS_SQS_SECRET_KEY=your_secret_key
-AWS_SQS_QUEUE=default-queue
 ```
 
-#### 4️⃣ 인프라 서비스 시작 (Docker 사용)
+### 3️⃣ MySQL 실행 (Docker)
 
 ```bash
-# MySQL 시작
 docker run -d \
   --name mysql \
   -e MYSQL_ROOT_PASSWORD=password \
   -e MYSQL_DATABASE=fastapi_db \
   -p 3306:3306 \
   mysql:8.0
-
-# MinIO 시작 (선택적)
-docker run -d \
-  --name minio \
-  -p 9000:9000 \
-  -p 9001:9001 \
-  -e MINIO_ROOT_USER=minioadmin \
-  -e MINIO_ROOT_PASSWORD=minioadmin \
-  minio/minio server /data --console-address ":9001"
 ```
 
-#### 5️⃣ 데이터베이스 마이그레이션
+### 4️⃣ 데이터베이스 마이그레이션
 
 ```bash
-# 최신 스키마로 마이그레이션
 alembic upgrade head
-
-# 새 마이그레이션 생성 (필요 시)
-alembic revision --autogenerate -m "설명"
 ```
 
-#### 6️⃣ 애플리케이션 실행
+### 5️⃣ 서버 실행
 
-**옵션 A: 모놀리식 서버 (권장 - 개발용)**
 ```bash
 python run_server_local.py --env local
 ```
-- **URL**: http://localhost:8000
-- **문서**: http://localhost:8000/api/docs
-- **Admin**: http://localhost:8000/api/admin
 
-**옵션 B: 마이크로서비스**
-```bash
-python run_microservice.py --env local
-```
-- **User Service**: http://localhost:8001/docs
-- **Chat Service**: http://localhost:8002/docs
+### 6️⃣ 접속 확인
 
-**옵션 C: Docker Compose**
-```bash
-# 빌드 및 실행
-docker-compose up -d
-
-# 로그 확인
-docker-compose logs -f
-
-# 중지
-docker-compose down
-```
-
-### 🎉 성공!
-
-서버가 실행되면 다음 URL에 접속하세요:
-
-#### 📚 API 문서
-- **메인 문서 허브**: http://localhost:8000/api/docs
+- **API 문서**: http://localhost:8000/api/docs
 - **Swagger UI**: http://localhost:8000/api/docs-swagger
 - **ReDoc**: http://localhost:8000/api/docs-redoc
-- **Scalar**: http://localhost:8000/api/docs-scalar
+- **SQLAdmin**: http://localhost:8000/api/admin
+- **Health Check**: http://localhost:8000/api/health
 
-#### 🔧 관리 도구
-- **SQLAdmin**: http://localhost:8000/api/admin (데이터베이스 관리)
-- **MinIO Console**: http://localhost:9001 (스토리지 관리)
+---
 
-#### ⚡ Health Check
-```bash
-curl http://localhost:8000/api/health
-```
+## 📈 새 도메인 추가하기
 
-### 코드 품질 관리
+**Product 도메인을 예로 들어 7단계로 설명합니다.**
 
-#### Pre-commit 설정
-```bash
-# pre-commit 설치
-pre-commit install
-
-# 모든 파일에 실행
-pre-commit run --all-files
-
-# 수동 체크 (mypy, bandit)
-pre-commit run --hook-stage manual mypy
-pre-commit run --hook-stage manual bandit
-```
-
-## 📚 API 문서
-
-### 다중 문서 UI 지원
-
-본 프로젝트는 **5가지 API 문서 UI**를 제공합니다:
-
-| UI | URL | 특징 |
-|----|-----|------|
-| **선택 허브** | `/api/docs` | 문서 UI 선택 페이지 |
-| **Swagger UI** | `/api/docs-swagger` | 가장 대중적, 인터랙티브 테스트 |
-| **ReDoc** | `/api/docs-redoc` | 깔끔한 문서 중심 디자인 |
-| **Scalar** | `/api/docs-scalar` | 모던하고 세련된 UI |
-| **Elements** | `/api/docs-elements` | Stoplight 인터랙티브 UI |
-| **RapiDoc** | `/api/docs-rapidoc` | 빠르고 가벼운 UI |
-
-### API 엔드포인트 예시
-
-#### User Management API
-
-| Method | Endpoint | 설명 |
-|--------|----------|------|
-| `POST` | `/api/v1/user` | 사용자 생성 |
-| `POST` | `/api/v1/user` | 복수 사용자 생성 |
-| `GET` | `/api/v1/user?page=1&pageSize=10` | 사용자 목록 (페이지네이션) |
-| `GET` | `/api/v1/user/{user_id}` | 특정 사용자 조회 |
-| `POST` | `/api/v1/user/by-ids` | ID 목록으로 조회 |
-| `PUT` | `/api/v1/user/{user_id}` | 사용자 정보 수정 |
-| `DELETE` | `/api/v1/user/{user_id}` | 사용자 삭제 |
-
-#### 응답 형식
-
-**성공 응답**:
-```json
-{
-  "success": true,
-  "message": "Request processed successfully",
-  "data": {
-    "id": 1,
-    "username": "john_doe",
-    "full_name": "John Doe",
-    "email": "john@example.com",
-    "created_at": "2024-01-01T00:00:00Z",
-    "updated_at": "2024-01-01T00:00:00Z"
-  },
-  "pagination": null
-}
-```
-
-**에러 응답**:
-```json
-{
-  "success": false,
-  "message": "Request failed",
-  "error_code": "USER_NOT_FOUND",
-  "error_details": {
-    "user_id": 999
-  }
-}
-```
-
-## 📈 새로운 도메인 추가 가이드
-
-본 아키텍처는 도메인 확장이 매우 간단합니다. **User 도메인**을 참고하여 새로운 도메인을 추가하세요.
-
-### 1단계: 도메인 디렉토리 생성
-
-```bash
-src/
-└── product/              # 새로운 도메인 (예: Product)
-    ├── domain/
-    │   ├── entities/
-    │   │   └── product_entity.py
-    │   └── services/
-    │       └── product_service.py
-    ├── application/
-    │   └── use_cases/
-    │       └── product_use_case.py
-    ├── infrastructure/
-    │   ├── database/
-    │   │   └── models/
-    │   │       └── product_model.py
-    │   ├── repositories/
-    │   │   └── product_repository.py
-    │   └── di/
-    │       └── product_container.py
-    ├── interface/
-    │   ├── server/
-    │   │   ├── routers/
-    │   │   │   └── product_router.py
-    │   │   ├── dtos/
-    │   │   │   └── product_dto.py
-    │   │   └── bootstrap/
-    │   │       └── product_bootstrap.py
-    │   ├── admin/
-    │   │   └── views/
-    │   │       └── product_view.py
-    │   └── consumer/
-    │       └── tasks/
-    └── app.py            # 마이크로서비스 진입점 (선택)
-```
-
-### 2단계: Entity 정의
+### 1단계: Entity 정의 (`src/product/domain/entities/product_entity.py`)
 
 ```python
-# src/product/domain/entities/product_entity.py
 from datetime import datetime
 from pydantic import Field
 from src._core.domain.entities.entity import Entity
@@ -631,19 +348,35 @@ class ProductEntity(Entity):
     updated_at: datetime
 
 class CreateProductEntity(Entity):
-    name: str = Field(..., description="제품명")
-    price: int = Field(..., description="가격")
+    name: str
+    price: int
 
 class UpdateProductEntity(Entity):
-    name: str = Field(..., description="제품명")
-    price: int = Field(..., description="가격")
+    name: str
+    price: int
 ```
 
-### 3단계: Repository 구현
+### 2단계: SQLAlchemy Model (`src/product/infrastructure/database/models/product_model.py`)
 
 ```python
-# src/product/infrastructure/repositories/product_repository.py
-from src._core.infrastructure.repositories.base_repository import BaseRepository
+from sqlalchemy import Integer, String, DateTime, func
+from sqlalchemy.orm import Mapped, mapped_column
+from src._core.infrastructure.database.database import Base
+
+class ProductModel(Base):
+    __tablename__ = "product"
+    
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    price: Mapped[int] = mapped_column(Integer, nullable=False)
+    created_at: Mapped[DateTime] = mapped_column(DateTime, server_default=func.now())
+    updated_at: Mapped[DateTime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
+```
+
+### 3단계: Repository (`src/product/infrastructure/repositories/product_repository.py`)
+
+```python
+from src._core.infrastructure.database.base_repository import BaseRepository
 from src._core.infrastructure.database.database import Database
 from src.product.domain.entities.product_entity import (
     CreateProductEntity, ProductEntity, UpdateProductEntity
@@ -664,10 +397,9 @@ class ProductRepository(
     # 추가 메서드가 필요하면 여기에 구현
 ```
 
-### 4단계: Service 구현
+### 4단계: Service (`src/product/domain/services/product_service.py`)
 
 ```python
-# src/product/domain/services/product_service.py
 from src._core.domain.services.base_service import BaseService
 from src.product.domain.entities.product_entity import (
     CreateProductEntity, ProductEntity, UpdateProductEntity
@@ -687,10 +419,9 @@ class ProductService(
     # 비즈니스 로직 추가
 ```
 
-### 5단계: UseCase 구현
+### 5단계: UseCase (`src/product/application/use_cases/product_use_case.py`)
 
 ```python
-# src/product/application/use_cases/product_use_case.py
 from src._core.application.use_cases.base_use_case import BaseUseCase
 from src.product.domain.entities.product_entity import (
     CreateProductEntity, ProductEntity, UpdateProductEntity
@@ -709,10 +440,9 @@ class ProductUseCase(
         )
 ```
 
-### 6단계: DI Container 설정
+### 6단계: DI Container (`src/product/infrastructure/di/product_container.py`)
 
 ```python
-# src/product/infrastructure/di/product_container.py
 from dependency_injector import containers, providers
 from src.product.infrastructure.repositories.product_repository import ProductRepository
 from src.product.domain.services.product_service import ProductService
@@ -737,39 +467,33 @@ class ProductContainer(containers.DeclarativeContainer):
     )
 ```
 
-### 7단계: Router 구현
+### 7단계: Router + Bootstrap
 
+**Router** (`src/product/interface/server/routers/product_router.py`):
 ```python
-# src/product/interface/server/routers/product_router.py
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from dependency_injector.wiring import inject, Provide
 from src._core.application.dtos.base_response import SuccessResponse
 from src.product.application.use_cases.product_use_case import ProductUseCase
 from src.product.infrastructure.di.product_container import ProductContainer
-from src.product.interface.server.dtos.product_dto import (
-    CreateProductRequest, ProductResponse
-)
 
 router = APIRouter()
 
 @router.post("/product", response_model=SuccessResponse[ProductResponse])
 @inject
 async def create_product(
-    create_data: CreateProductRequest,
+    item: CreateProductRequest,
     use_case: ProductUseCase = Depends(Provide[ProductContainer.product_use_case]),
 ):
-    data = await use_case.create_data(create_data=create_data.to_entity(...))
+    data = await use_case.create_data(entity=item.to_entity(CreateProductEntity))
     return SuccessResponse(data=ProductResponse.from_entity(data))
+
+# 나머지 CRUD 엔드포인트도 동일한 패턴
 ```
 
-### 8단계: ServerContainer에 통합
-
+**ServerContainer에 등록** (`src/_shared/infrastructure/di/server_container.py`):
 ```python
-# src/_shared/infrastructure/di/server_container.py
-from dependency_injector import containers, providers
-from src._core.infrastructure.di.core_container import CoreContainer
-from src.user.infrastructure.di.user_container import UserContainer
-from src.product.infrastructure.di.product_container import ProductContainer  # 추가
+from src.product.infrastructure.di.product_container import ProductContainer
 
 class ServerContainer(containers.DeclarativeContainer):
     core_container = providers.Container(CoreContainer)
@@ -777,197 +501,309 @@ class ServerContainer(containers.DeclarativeContainer):
     product_container = providers.Container(ProductContainer, core_container=core_container)  # 추가
 ```
 
-### 9단계: Bootstrap에 등록
-
+**Bootstrap 등록** (`src/bootstrap.py`):
 ```python
-# src/bootstrap.py에 추가
 from src.product.interface.server.bootstrap.product_bootstrap import bootstrap_product_domain
 
 def bootstrap_app(app: FastAPI) -> None:
-    # ... 기존 코드 ...
-    
+    # ...
     server_container = ServerContainer()
     bootstrap_user_domain(...)
-    bootstrap_product_domain(  # 추가
-        app=app,
-        database=server_container.core_container.database(),
-        product_container=server_container.product_container,
-    )
+    bootstrap_product_domain(...)  # 추가
 ```
 
 ### ✅ 완료!
 
-이제 새로운 도메인이 추가되었습니다. **모든 CRUD 작업은 자동으로 제공**되며, 추가 비즈니스 로직만 구현하면 됩니다.
+이제 다음 엔드포인트가 자동으로 제공됩니다:
+- `POST /api/v1/product` - 생성
+- `GET /api/v1/products?page=1&pageSize=10` - 목록 (페이지네이션)
+- `GET /api/v1/product/{id}` - 조회
+- `PUT /api/v1/product/{id}` - 수정
+- `DELETE /api/v1/product/{id}` - 삭제
 
-## 🔄 아키텍처 패턴 상세
+---
 
-### 1. Domain-Driven Design (DDD)
+## 📘 활용 방법 및 모범 사례
 
-**도메인이 중심**이 되는 설계 방식:
+### 1️⃣ 언제 이 아키텍처를 사용해야 하나?
 
-```
-도메인 모델 (Entity, Service) 
-    ↓ 
-비즈니스 로직과 규칙 
-    ↓ 
-기술적 구현 (Repository, Database)
-```
+**✅ 추천하는 경우:**
+- 10개 이상의 엔드포인트를 가진 중대형 프로젝트
+- 팀 단위 협업 프로젝트 (일관된 코드 스타일 필요)
+- 장기 운영 예정인 프로젝트 (유지보수성 중요)
+- 도메인이 명확하게 분리되는 프로젝트
 
-**핵심 원칙**:
-- **도메인 순수성**: Entity와 Service는 인프라에 의존하지 않음
-- **비즈니스 중심**: 도메인 언어로 코드 작성
-- **계층 분리**: 각 계층의 책임을 명확히 구분
+**❌ 권장하지 않는 경우:**
+- 5개 미만의 간단한 API (Over-engineering)
+- 빠른 프로토타입/PoC
+- 혼자서 단기간 개발하는 프로젝트
 
-### 2. Clean Architecture (헥사고날 아키텍처)
+### 2️⃣ BaseRepository 확장하기
 
-**의존성 역전 원칙**:
+**커스텀 쿼리 추가**:
 ```python
-# ❌ 잘못된 방식: Domain이 Infrastructure에 의존
-class UserService:
-    def __init__(self, database: Database):  # Infrastructure 의존
-        self.database = database
-
-# ✅ 올바른 방식: Infrastructure가 Domain에 의존
-class UserService:
-    def __init__(self, repository: BaseRepository):  # 추상화 의존
-        self.repository = repository
-
-class UserRepository(BaseRepository):  # Infrastructure가 구현
-    pass
+class UserRepository(BaseRepository[...]):
+    async def find_by_email(self, email: str) -> UserEntity | None:
+        async with self.database.session() as session:
+            result = await session.execute(
+                select(self.model).filter(self.model.email == email)
+            )
+            data = result.scalar_one_or_none()
+            if not data:
+                return None
+            return self.return_entity.model_validate(data, from_attributes=True)
 ```
 
-### 3. Repository Pattern
-
-**데이터 액세스 추상화**:
-- Domain Layer는 Repository 인터페이스만 알고 있음
-- Infrastructure Layer가 실제 구현 제공
-- 테스트 시 Mock Repository로 교체 가능
-
-### 4. CQRS (명령-조회 책임 분리)
-
-**읽기와 쓰기 분리**:
-- **Command**: `create_data`, `update_data`, `delete_data`
-- **Query**: `get_data`, `get_datas` (읽기 전용, 부작용 없음)
-
-## 🌐 모놀리식 vs 마이크로서비스
-
-본 아키텍처는 **두 가지 실행 모드**를 지원합니다:
-
-### 모놀리식 모드 (권장 - 개발/소규모)
-
-```bash
-python run_server_local.py --env local
-```
-
-**장점**:
-- 간단한 배포 및 디버깅
-- 낮은 운영 복잡도
-- 트랜잭션 관리 용이
-
-**구조**:
-```
-src/app.py (단일 FastAPI 앱)
-    ├── User Domain
-    ├── Product Domain
-    └── Order Domain
-```
-
-### 마이크로서비스 모드 (프로덕션/대규모)
-
-```bash
-python run_microservice.py --env prod
-```
-
-**장점**:
-- 독립적인 배포 및 확장
-- 장애 격리
-- 기술 스택 다양화
-
-**구조**:
-```
-User Service (Port 8001)
-Product Service (Port 8002)
-Order Service (Port 8003)
-    ↓
-API Gateway (Port 8000)
-```
-
-## 🔒 보안 고려사항
-
-### 환경 변수 관리
-
-- **절대 하드코딩 금지**: API 키, 비밀번호 등
-- **`.env` 파일 사용**: `.gitignore`에 추가 필수
-- **Pydantic Settings**: 타입 안전한 설정 관리
-
-### 예정된 보안 기능
-
-- **JWT 인증**: 토큰 기반 인증
-- **RBAC**: 역할 기반 접근 제어
-- **Rate Limiting**: API 호출 제한
-- **CORS**: Cross-Origin 설정
-- **SQL Injection 방지**: Parameterized Query (SQLAlchemy)
-
-## 🚀 성능 최적화
-
-### 데이터베이스
-
-- **비동기 처리**: `aiomysql`로 논블로킹 I/O
-- **연결 풀**: `pool_size=10`, `max_overflow=20`
-- **인덱스 최적화**: ID, 외래 키 자동 인덱싱
-- **세션 관리**: Context Manager로 자동 close
-
-### HTTP 클라이언트
-
-- **연결 풀**: `aiohttp.TCPConnector`로 재사용
-- **타임아웃**: Connect/Read 타임아웃 설정
-- **DNS 캐싱**: TTL 300초
-
-### 캐싱 (향후 계획)
-
-- **Redis 통합**: 자주 조회되는 데이터 캐싱
-- **Application Level**: `functools.lru_cache`
-
-## 🧪 테스트 전략
-
-### 단위 테스트
+### 3️⃣ Service에 비즈니스 로직 추가
 
 ```python
-# Repository 테스트 (Mock Database)
+class UserService(BaseService[...]):
+    async def register_user(self, entity: CreateUserEntity) -> UserEntity:
+        # 1. 이메일 중복 체크
+        existing = await self.base_repository.find_by_email(entity.email)
+        if existing:
+            raise BaseCustomException(status_code=400, message="Email already exists")
+        
+        # 2. 비밀번호 해싱
+        entity.password = hash_password(entity.password)
+        
+        # 3. 사용자 생성
+        return await self.base_repository.insert_data(entity)
+```
+
+### 4️⃣ UseCase에서 여러 Service 조율
+
+```python
+class OrderUseCase(BaseUseCase[...]):
+    def __init__(
+        self,
+        order_service: OrderService,
+        product_service: ProductService,
+        user_service: UserService,
+    ):
+        super().__init__(base_service=order_service, ...)
+        self.product_service = product_service
+        self.user_service = user_service
+    
+    async def create_order(self, entity: CreateOrderEntity) -> OrderEntity:
+        # 1. 사용자 존재 확인
+        await self.user_service.get_data_by_data_id(entity.user_id)
+        
+        # 2. 제품 재고 확인
+        product = await self.product_service.get_data_by_data_id(entity.product_id)
+        if product.stock < entity.quantity:
+            raise BaseCustomException(status_code=400, message="Out of stock")
+        
+        # 3. 주문 생성
+        return await self.base_service.create_data(entity)
+```
+
+### 5️⃣ 외부 API 호출 (BaseHttpGateway 활용)
+
+```python
+class PaymentGateway(BaseHttpGateway):
+    def __init__(self, http_client: HttpClient, api_key: str):
+        super().__init__(http_client, base_url="https://api.payment.com")
+        self.api_key = api_key
+    
+    def _get_headers(self) -> dict[str, str]:
+        return {"Authorization": f"Bearer {self.api_key}"}
+    
+    async def process_payment(self, amount: int, card_token: str) -> dict:
+        return await self._post("/payments", json={
+            "amount": amount,
+            "card_token": card_token
+        })
+```
+
+### 6️⃣ 테스트 작성 (Mock 활용)
+
+```python
+import pytest
+from unittest.mock import AsyncMock
+
+@pytest.mark.asyncio
 async def test_create_user():
-    mock_db = Mock(spec=Database)
-    repo = UserRepository(database=mock_db)
-    # ...
+    # Mock Repository
+    mock_repo = AsyncMock(spec=UserRepository)
+    mock_repo.insert_data.return_value = UserEntity(id=1, username="test", ...)
+    
+    # Service 생성 (Mock 주입)
+    service = UserService(user_repository=mock_repo)
+    
+    # 테스트 실행
+    result = await service.create_data(CreateUserEntity(...))
+    
+    # 검증
+    assert result.id == 1
+    mock_repo.insert_data.assert_called_once()
 ```
 
-### 통합 테스트
+### 7️⃣ 에러 처리
 
+**커스텀 예외 정의**:
 ```python
-# FastAPI TestClient
-from fastapi.testclient import TestClient
-
-client = TestClient(app)
-response = client.post("/api/v1/user", json={...})
-assert response.status_code == 200
+class UserNotFoundException(BaseCustomException):
+    def __init__(self, user_id: int):
+        super().__init__(
+            status_code=404,
+            message=f"User with ID {user_id} not found",
+            error_code="USER_NOT_FOUND",
+            details={"user_id": user_id}
+        )
 ```
 
-## 📊 모니터링 및 로깅 (향후 계획)
+**ExceptionMiddleware가 자동으로 처리**:
+```json
+{
+  "success": false,
+  "message": "User with ID 123 not found",
+  "error_code": "USER_NOT_FOUND",
+  "error_details": {
+    "user_id": 123
+  }
+}
+```
 
-- **구조화된 로깅**: JSON 형식 로그
-- **Prometheus**: 메트릭 수집
-- **Grafana**: 시각화 대시보드
-- **Sentry**: 에러 트래킹
+---
+
+## 🔧 기술 스택
+
+### 핵심 프레임워크
+
+| 기술 | 버전 | 용도 |
+|------|------|------|
+| **FastAPI** | 0.115+ | 고성능 비동기 웹 프레임워크 |
+| **Pydantic** | 2.10+ | 데이터 검증 및 설정 관리 |
+| **SQLAlchemy** | 2.0+ | 비동기 ORM |
+| **Alembic** | 1.15+ | 데이터베이스 마이그레이션 |
+| **dependency-injector** | 4.46+ | 의존성 주입 컨테이너 |
+
+### 데이터베이스 & 드라이버
+
+| 기술 | 용도 |
+|------|------|
+| **MySQL** | 8.0+ 메인 RDBMS |
+| **aiomysql** | 비동기 MySQL 드라이버 |
+| **PyMySQL** | 동기 MySQL 드라이버 (마이그레이션용) |
+
+### 비동기 & 인프라
+
+| 기술 | 용도 |
+|------|------|
+| **aiohttp** | 비동기 HTTP 클라이언트 (연결 풀) |
+| **aioboto3** | 비동기 S3/MinIO 클라이언트 |
+| **Celery** | 비동기 작업 큐 |
+| **AWS SQS** | Celery 메시지 브로커 |
+
+### 개발 도구
+
+| 기술 | 용도 |
+|------|------|
+| **Black** | 코드 포매팅 |
+| **isort** | Import 정렬 |
+| **Flake8** | 린팅 |
+| **pre-commit** | Git hook 자동화 |
+| **SQLAdmin** | 데이터베이스 관리 UI |
+| **UV** | 빠른 Python 패키지 관리 |
+
+---
+
+## 📁 프로젝트 구조
+
+```
+fastapi-layered-architecture/
+├── src/
+│   ├── _core/                      # 🎯 핵심 공통 인프라
+│   │   ├── application/            # Application Layer
+│   │   │   ├── dtos/              # BaseRequest, BaseResponse
+│   │   │   ├── routers/           # Health Check, Docs
+│   │   │   └── use_cases/         # BaseUseCase (Generic)
+│   │   ├── domain/                # Domain Layer
+│   │   │   ├── entities/          # Entity (Pydantic ABC)
+│   │   │   └── services/          # BaseService (Generic)
+│   │   ├── infrastructure/        # Infrastructure Layer
+│   │   │   ├── database/          # Database, BaseRepository
+│   │   │   ├── http/              # HttpClient, BaseHttpGateway
+│   │   │   ├── messaging/         # Celery
+│   │   │   ├── storage/           # S3/MinIO
+│   │   │   └── di/                # CoreContainer (DI)
+│   │   ├── middleware/            # ExceptionMiddleware
+│   │   ├── exceptions/            # BaseCustomException
+│   │   ├── common/                # Pagination, DTO Utils
+│   │   └── config.py              # Settings (Pydantic)
+│   │
+│   ├── _shared/                   # 🔗 공유 컴포넌트
+│   │   └── infrastructure/
+│   │       └── di/
+│   │           └── server_container.py  # 통합 DI Container
+│   │
+│   ├── user/                      # 👤 User 도메인 (예시)
+│   │   ├── domain/
+│   │   │   ├── entities/          # UserEntity
+│   │   │   └── services/          # UserService
+│   │   ├── application/
+│   │   │   └── use_cases/         # UserUseCase
+│   │   ├── infrastructure/
+│   │   │   ├── database/
+│   │   │   │   └── models/        # UserModel (SQLAlchemy)
+│   │   │   ├── repositories/      # UserRepository
+│   │   │   └── di/                # UserContainer (DI)
+│   │   ├── interface/
+│   │   │   ├── server/            # REST API
+│   │   │   │   ├── routers/       # user_router.py
+│   │   │   │   ├── dtos/          # user_dto.py
+│   │   │   │   └── bootstrap/     # user_bootstrap.py
+│   │   │   ├── admin/             # SQLAdmin Views
+│   │   │   └── consumer/          # Celery Tasks
+│   │   └── app.py                 # User 마이크로서비스 진입점
+│   │
+│   ├── app.py                     # 🚀 모놀리식 앱 진입점
+│   └── bootstrap.py               # 앱 초기화
+│
+├── migrations/                    # Alembic 마이그레이션
+├── _docker/                       # Docker 설정
+├── _env/                          # 환경변수 파일
+├── config.yml                     # DI 설정
+├── pyproject.toml                 # 의존성 관리
+├── alembic.ini                    # Alembic 설정
+├── docker-compose.yml             # Docker Compose
+├── run_server_local.py            # 모놀리식 실행
+├── run_microservice.py            # 마이크로서비스 실행
+└── LICENSE                        # MIT License
+```
+
+---
+
+## 🎓 학습 자료
+
+### 이 프로젝트가 사용하는 디자인 패턴
+
+1. **Layered Architecture (계층형)** - 관심사 분리
+2. **Domain-Driven Design (DDD)** - 도메인 중심 설계
+3. **Repository Pattern** - 데이터 액세스 추상화
+4. **Dependency Injection** - 의존성 역전
+5. **Generic Programming** - 코드 재사용성
+6. **DTO Pattern** - 계층 간 데이터 전송
+
+### 추천 도서
+
+- **Domain-Driven Design** - Eric Evans
+- **Clean Architecture** - Robert C. Martin
+- **Implementing Domain-Driven Design** - Vaughn Vernon
+
+---
 
 ## 🤝 기여 가이드
 
 ### 코딩 규칙
 
-1. **Black**: 자동 포매팅 (88자 제한)
-2. **isort**: Import 정렬
-3. **Type Hints**: 모든 함수에 타입 명시
-4. **Docstring**: 복잡한 로직에 설명 추가
+- **Black**: 코드 포매팅 (88자 제한)
+- **isort**: Import 정렬
+- **Type Hints**: 모든 함수/메서드에 타입 명시
+- **Docstring**: 복잡한 로직에 설명 추가
 
-### Commit 규칙
+### Commit 메시지 규칙
 
 ```
 feat: 새로운 기능 추가
@@ -976,38 +812,87 @@ docs: 문서 수정
 style: 코드 포맷팅
 refactor: 리팩토링
 test: 테스트 추가
-chore: 빌드 또는 도구 변경
+chore: 빌드/도구 변경
 ```
 
-## 🎓 학습 자료
+### Pre-commit 설정
 
-### 추천 읽을거리
+```bash
+# pre-commit 설치
+pre-commit install
 
-- **Domain-Driven Design** - Eric Evans
-- **Clean Architecture** - Robert C. Martin
-- **Implementing Domain-Driven Design** - Vaughn Vernon
+# 모든 파일에 실행
+pre-commit run --all-files
+```
 
-### 관련 패턴
+---
 
-- **Repository Pattern**: 데이터 액세스 추상화
-- **Dependency Injection**: 의존성 역전
-- **Factory Pattern**: 객체 생성 캡슐화
-- **Strategy Pattern**: 알고리즘 교체 가능
+## ❓ FAQ
+
+### Q1. "보일러플레이트 코드가 너무 많지 않나요?"
+
+**A**: 이것은 **"보일러플레이트를 제거하기 위한 아키텍처 템플릿"**입니다.
+
+- 일반 FastAPI: 도메인마다 100줄+ 반복 작성
+- 이 프로젝트: BaseRepository/Service/UseCase를 한 번만 작성하고 재사용
+
+### Q2. "작은 프로젝트에도 적합한가요?"
+
+**A**: 아니요. 5개 미만의 엔드포인트라면 일반 FastAPI가 더 적합합니다.
+
+- 작은 프로젝트: Over-engineering
+- 중대형 프로젝트: 생산성 10배 향상
+
+### Q3. "Clean Architecture와 다른 점은?"
+
+**A**: 이 프로젝트는 **Layered Architecture**입니다.
+
+- Clean Architecture: 모든 것을 인터페이스로 추상화 (순수주의)
+- Layered Architecture: 실용적인 계층 분리 (이 프로젝트)
+
+### Q4. "마이그레이션 없이 사용할 수 있나요?"
+
+**A**: 네, `alembic upgrade head` 대신 `Base.metadata.create_all()`을 사용하세요.
+
+```python
+# 개발 환경에서만 사용
+async with database.async_engine.begin() as conn:
+    await conn.run_sync(Base.metadata.create_all)
+```
+
+---
 
 ## 📝 라이선스
 
-이 프로젝트는 교육 및 참고 목적으로 제공됩니다.
+이 프로젝트는 [MIT License](LICENSE) 하에 배포됩니다.
+
+```
+Copyright (c) 2025 FastAPI Layered Architecture Contributors
+
+상업적 사용, 수정, 배포, 사적 사용이 자유롭습니다.
+단, 저작권 표시와 라이선스 고지를 포함해야 합니다.
+```
+
+---
 
 ## 🙏 감사의 말
 
 이 아키텍처는 다음 원칙들을 기반으로 합니다:
-- **SOLID 원칙**
-- **Clean Code**
-- **Domain-Driven Design**
-- **Hexagonal Architecture**
+
+- **SOLID 원칙** (단일 책임, 개방-폐쇄, 리스코프 치환, 인터페이스 분리, 의존성 역전)
+- **DDD (Domain-Driven Design)** - Eric Evans
+- **Layered Architecture** - 전통적인 엔터프라이즈 패턴
+- **Repository Pattern** - Martin Fowler
 
 ---
 
-**💡 이 프로젝트는 엔터프라이즈급 애플리케이션을 위한 범용 백엔드 아키텍처 템플릿입니다.**
+## 📞 문의 및 지원
 
-비즈니스 로직에 집중하고, 인프라는 우리가 제공하는 견고한 기반을 활용하세요.
+- **Issues**: GitHub Issues에 버그 리포트 및 기능 제안
+- **Discussions**: 아키텍처 관련 질문 및 토론
+
+---
+
+**💡 이 프로젝트는 엔터프라이즈급 FastAPI 애플리케이션을 위한 실용적인 아키텍처 템플릿입니다.**
+
+**비즈니스 로직에 집중하고, 반복적인 인프라 코드는 우리가 제공하는 견고한 기반을 활용하세요.** 🚀
