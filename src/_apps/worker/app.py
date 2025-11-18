@@ -1,8 +1,8 @@
 from celery import Celery
 from kombu.utils.url import safequote
 
-from src._apps.worker.di.container import WorkerContainer
 from src._apps.worker.bootstrap import bootstrap_app
+from src._apps.worker.di.container import WorkerContainer
 
 container = None
 
