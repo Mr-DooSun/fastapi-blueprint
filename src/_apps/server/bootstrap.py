@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from src._core.application.routers.api import docs_router, health_check_router
 from src._core.config import settings
 from src._core.middleware.exception_middleware import ExceptionMiddleware
-from src._shared.infrastructure.di.server_container import ServerContainer
+from src._apps.server.di.container import ServerContainer
 from src.user.interface.server.bootstrap.user_bootstrap import bootstrap_user_domain
 
 
