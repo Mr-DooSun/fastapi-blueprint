@@ -44,10 +44,7 @@ def create_app():
     app.add_middleware(ExceptionMiddleware)
 
     # TrustedHostMiddleware 설정
-    app.add_middleware(
-        TrustedHostMiddleware,
-        allowed_hosts=settings.allowed_hosts
-    )
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.allowed_hosts)
 
     # CORSMiddleware 설정
     app.add_middleware(

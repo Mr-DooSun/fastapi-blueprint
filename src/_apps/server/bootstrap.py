@@ -12,12 +12,9 @@ from src.user.interface.server.bootstrap.user_bootstrap import bootstrap_user_do
 def bootstrap_app(app: FastAPI) -> None:
     # 미들웨어 설정
     app.add_middleware(ExceptionMiddleware)
-    
+
     # TrustedHostMiddleware 설정
-    app.add_middleware(
-        TrustedHostMiddleware,
-        allowed_hosts=settings.allowed_hosts
-    )
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.allowed_hosts)
 
     # CORSMiddleware 설정
     app.add_middleware(

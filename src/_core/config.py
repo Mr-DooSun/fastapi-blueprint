@@ -17,7 +17,9 @@ class Settings(BaseSettings):
     # Database
     # ----------------------------------------------------------------
     database_user: str = Field(default="postgres", validation_alias="DATABASE_USER")
-    database_password: str = Field(default="postgres", validation_alias="DATABASE_PASSWORD")
+    database_password: str = Field(
+        default="postgres", validation_alias="DATABASE_PASSWORD"
+    )
     database_host: str = Field(default="localhost", validation_alias="DATABASE_HOST")
     database_port: int = Field(default=5432, validation_alias="DATABASE_PORT")
     database_name: str = Field(default="postgres", validation_alias="DATABASE_NAME")
@@ -35,16 +37,26 @@ class Settings(BaseSettings):
     # ----------------------------------------------------------------
     minio_host: str | None = Field(default=None, validation_alias="MINIO_HOST")
     minio_port: int | None = Field(default=None, validation_alias="MINIO_PORT")
-    minio_access_key: str | None = Field(default=None, validation_alias="MINIO_ACCESS_KEY")
-    minio_secret_key: str | None = Field(default=None, validation_alias="MINIO_SECRET_KEY")
-    minio_bucket_name: str | None = Field(default=None, validation_alias="MINIO_BUCKET_NAME")
+    minio_access_key: str | None = Field(
+        default=None, validation_alias="MINIO_ACCESS_KEY"
+    )
+    minio_secret_key: str | None = Field(
+        default=None, validation_alias="MINIO_SECRET_KEY"
+    )
+    minio_bucket_name: str | None = Field(
+        default=None, validation_alias="MINIO_BUCKET_NAME"
+    )
 
     # ----------------------------------------------------------------
     # Messaging (AWS SQS)
     # ----------------------------------------------------------------
     aws_sqs_region: str | None = Field(default=None, validation_alias="AWS_SQS_REGION")
-    aws_sqs_access_key: str | None = Field(default=None, validation_alias="AWS_SQS_ACCESS_KEY")
-    aws_sqs_secret_key: str | None = Field(default=None, validation_alias="AWS_SQS_SECRET_KEY")
+    aws_sqs_access_key: str | None = Field(
+        default=None, validation_alias="AWS_SQS_ACCESS_KEY"
+    )
+    aws_sqs_secret_key: str | None = Field(
+        default=None, validation_alias="AWS_SQS_SECRET_KEY"
+    )
     aws_sqs_queue: str | None = Field(default=None, validation_alias="AWS_SQS_QUEUE")
 
     @property
@@ -74,13 +86,13 @@ class Settings(BaseSettings):
         """TrustedHostMiddleware 용 호스트 목록"""
         if self.is_dev:
             return ["localhost", "127.0.0.1"]
-        return ["api.example.com"] # TODO: 실제 운영 도메인 입력 필요
+        return ["api.example.com"]  # TODO: 실제 운영 도메인 입력 필요
 
     @property
     def allow_origins(self) -> list[str]:
         if self.is_dev:
             return ["*"]
-        return ["https://example.com"] # TODO: 실제 프론트엔드 도메인 입력 필요
+        return ["https://example.com"]  # TODO: 실제 프론트엔드 도메인 입력 필요
 
 
 settings = Settings()

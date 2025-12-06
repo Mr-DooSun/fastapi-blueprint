@@ -32,12 +32,6 @@ class DatabaseConfig(BaseModel):
                     },
                 },
             )
-        
-        # Default (local/dev) configuration
-        return cls(
-            echo=True,
-            pool_size=5,
-            max_overflow=10,
-            pool_pre_ping=True
-        )
 
+        # Default (local/dev) configuration
+        return cls(echo=True, pool_size=5, max_overflow=10, pool_pre_ping=True)
