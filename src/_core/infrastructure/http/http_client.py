@@ -9,21 +9,21 @@ def get_http_client_config(env: str):
     if env == "prod":
         return {
             "timeout": aiohttp.ClientTimeout(total=30, connect=10, sock_read=30),
-            "connector": aiohttp.TCPConnector(
-                limit=100,  # 전체 connection pool 크기
-                limit_per_host=30,  # 호스트당 connection 수
-                ttl_dns_cache=300,  # DNS 캐시 TTL (초)
-                keepalive_timeout=30,  # Keep-alive 타임아웃
-            ),
+            "connector_params": {
+                "limit": 100,  # 전체 connection pool 크기
+                "limit_per_host": 30,  # 호스트당 connection 수
+                "ttl_dns_cache": 300,  # DNS 캐시 TTL (초)
+                "keepalive_timeout": 30,  # Keep-alive 타임아웃
+            },
         }
     else:
         return {
             "timeout": aiohttp.ClientTimeout(total=10, connect=5, sock_read=10),
-            "connector": aiohttp.TCPConnector(
-                limit=50,
-                limit_per_host=20,
-                ttl_dns_cache=300,
-            ),
+            "connector_params": {
+                "limit": 50,
+                "limit_per_host": 20,
+                "ttl_dns_cache": 300,
+            },
         }
 
 
@@ -35,7 +35,11 @@ class HttpClient:
 
     async def _ensure_session(self) -> aiohttp.ClientSession:
         if self._client_session is None or self._client_session.closed:
-            self._client_session = aiohttp.ClientSession(**self._config)
+            connector = aiohttp.TCPConnector(**self._config["connector_params"])
+            self._client_session = aiohttp.ClientSession(
+                timeout=self._config["timeout"],
+                connector=connector,
+            )
         return self._client_session
 
     @asynccontextmanager
