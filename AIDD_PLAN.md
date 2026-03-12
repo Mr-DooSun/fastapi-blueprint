@@ -405,7 +405,7 @@ tests/                              # NEW (이미 디렉토리 생성 완료)
 
 ## 9. 실행 계획 (단계별)
 
-> ⚠️ Phase 1 일부 작업 완료됨 (아래 ✅ 표시)
+> ✅ 전체 리팩토링 완료 (2026-03-12)
 
 ### Phase 1: 기반 정리
 
@@ -414,68 +414,70 @@ tests/                              # NEW (이미 디렉토리 생성 완료)
 | 1.1 | `src/_core/domain/protocols/repository_protocol.py` 생성 | ✅ 완료 |
 | 1.2 | `src/_core/domain/value_objects/value_object.py` 생성 | ✅ 완료 |
 | 1.3 | `src/_core/domain/events/domain_event.py` 생성 | ✅ 완료 |
-| 1.4 | `src/_core/application/mappers/` 삭제 (Mapper 불필요 결정) | ⏳ 미완료 |
-| 1.5 | `src/user/application/mappers/` 삭제 | ⏳ 미완료 |
+| 1.4 | `src/_core/application/mappers/` 삭제 | ✅ 완료 |
+| 1.5 | `src/user/application/mappers/` 삭제 | ✅ 완료 |
 | 1.6 | `tests/` 디렉토리 구조 생성 | ✅ 완료 |
-| 1.7 | `tests/conftest.py` 생성 | ✅ 완료 |
-| 1.8 | `tests/factories/user_factory.py` 생성 | ✅ 완료 (Entity 이름으로 생성됨, DTO로 수정 필요) |
+| 1.7 | `tests/conftest.py` 생성 (aiosqlite fixture) | ✅ 완료 |
+| 1.8 | `tests/factories/user_factory.py` 생성 (DTO 기반) | ✅ 완료 |
 | 1.9 | `pyproject.toml` dev 의존성 추가 (pytest, pytest-asyncio, aiosqlite) | ✅ 완료 |
 
 ### Phase 2: Base 클래스 정리
 
-| 단계 | 파일 | 변경 내용 |
-|---|---|---|
-| 2.1 | `src/_core/domain/entities/entity.py` | **삭제** |
-| 2.2 | `src/_core/application/dtos/base_request.py` | `to_entity()` 메서드 및 Entity import 제거 |
-| 2.3 | `src/_core/application/dtos/base_response.py` | `from_entity()` 메서드 및 Entity import 제거 |
-| 2.4 | `src/_core/common/dto_utils.py` | **삭제** (`dtos_to_entities`, `entities_to_dtos` 불필요) |
-| 2.5 | `src/_core/infrastructure/database/base_repository.py` | TypeVar bound `Entity` → `BaseModel` |
-| 2.6 | `src/_core/domain/services/base_service.py` | `BaseRepository` import → `BaseRepositoryProtocol` import |
-| 2.7 | `src/_core/application/use_cases/base_use_case.py` | TypeVar bound `Entity` → `BaseModel` |
+| 단계 | 파일 | 변경 내용 | 상태 |
+|---|---|---|---|
+| 2.1 | `src/_core/domain/entities/entity.py` | **삭제** | ✅ 완료 |
+| 2.2 | `src/_core/application/dtos/base_request.py` | `to_entity()` 제거 | ✅ 완료 |
+| 2.3 | `src/_core/application/dtos/base_response.py` | `from_entity()` 제거 | ✅ 완료 |
+| 2.4 | `src/_core/common/dto_utils.py` | **삭제** | ✅ 완료 |
+| 2.5 | `src/_core/infrastructure/database/base_repository.py` | TypeVar bound `Entity` → `BaseModel` | ✅ 완료 |
+| 2.6 | `src/_core/domain/services/base_service.py` | `BaseRepository` → `BaseRepositoryProtocol` | ✅ 완료 |
+| 2.7 | `src/_core/application/use_cases/base_use_case.py` | TypeVar bound `Entity` → `BaseModel` | ✅ 완료 |
 
 ### Phase 3: Domain DTO 구축 (Entity 대체)
 
-| 단계 | 파일 | 변경 내용 |
-|---|---|---|
-| 3.1 | `src/user/domain/dtos/__init__.py` | **신규 생성** |
-| 3.2 | `src/user/domain/dtos/user_dto.py` | **신규 생성** — UserDTO, CreateUserDTO, UpdateUserDTO |
-| 3.3 | `src/user/domain/entities/` | **디렉토리 삭제** |
+| 단계 | 파일 | 변경 내용 | 상태 |
+|---|---|---|---|
+| 3.1 | `src/user/domain/dtos/__init__.py` | **신규 생성** | ✅ 완료 |
+| 3.2 | `src/user/domain/dtos/user_dto.py` | **신규 생성** — UserDTO, CreateUserDTO, UpdateUserDTO | ✅ 완료 |
+| 3.3 | `src/user/domain/entities/` | **디렉토리 삭제** | ✅ 완료 |
 
 ### Phase 4: 연결 계층 수정
 
-| 단계 | 파일 | 변경 내용 |
-|---|---|---|
-| 4.1 | `src/user/infrastructure/repositories/user_repository.py` | Entity → DTO |
-| 4.2 | `src/user/domain/services/user_service.py` | `UserRepository` → `UserRepositoryProtocol` 타입힌트 |
-| 4.3 | `src/user/application/use_cases/user_use_case.py` | Entity → DTO |
-| 4.4 | `src/user/infrastructure/di/user_container.py` | Entity → DTO |
-| 4.5 | `src/user/interface/server/dtos/user_dto.py` | 다중상속 제거, 명시적 필드 선언 |
-| 4.6 | `src/user/interface/server/routers/user_router.py` | `to_entity/from_entity` → 인라인 변환 |
+| 단계 | 파일 | 변경 내용 | 상태 |
+|---|---|---|---|
+| 4.1 | `src/user/infrastructure/repositories/user_repository.py` | Entity → DTO | ✅ 완료 |
+| 4.2 | `src/user/domain/services/user_service.py` | Entity → DTO | ✅ 완료 |
+| 4.3 | `src/user/application/use_cases/user_use_case.py` | Entity → DTO | ✅ 완료 |
+| 4.4 | `src/user/infrastructure/di/user_container.py` | (변경 불필요) | ✅ 완료 |
+| 4.5 | `src/user/interface/server/dtos/user_dto.py` | 다중상속 제거, 명시적 필드 선언 | ✅ 완료 |
+| 4.6 | `src/user/interface/server/routers/user_router.py` | 인라인 변환으로 교체 | ✅ 완료 |
 
 ### Phase 5: Domain 패턴 추가
 
-| 단계 | 파일 | 변경 내용 |
-|---|---|---|
-| 5.1 | `src/user/domain/protocols/user_repository_protocol.py` | **신규** — 도메인 레포 계약 |
-| 5.2 | `src/user/domain/exceptions/user_exceptions.py` | **신규** — UserNotFoundException 등 |
-| 5.3 | `src/user/domain/events/user_events.py` | **신규** — UserCreated, UserUpdated |
+| 단계 | 파일 | 변경 내용 | 상태 |
+|---|---|---|---|
+| 5.1 | `src/user/domain/protocols/user_repository_protocol.py` | **신규** — 도메인 레포 계약 | ✅ 완료 |
+| 5.2 | `src/user/domain/exceptions/user_exceptions.py` | **신규** — UserNotFoundException 등 | ✅ 완료 |
+| 5.3 | `src/user/domain/events/user_events.py` | **신규** — UserCreated, UserUpdated, UserDeleted | ✅ 완료 |
 
 ### Phase 6: 테스트 작성
 
-| 단계 | 파일 | 내용 |
-|---|---|---|
-| 6.1 | `tests/factories/user_factory.py` | `make_user_dto()` 등으로 이름 수정 |
-| 6.2 | `tests/unit/user/domain/test_user_service.py` | Mock repo로 service 단위 테스트 |
-| 6.3 | `tests/unit/user/application/test_user_use_case.py` | Mock service로 use case 단위 테스트 |
-| 6.4 | `tests/integration/user/infrastructure/test_user_repository.py` | 실제 DB CRUD 테스트 |
-| 6.5 | `tests/e2e/user/test_user_router.py` | HTTP 엔드포인트 전체 테스트 |
+| 단계 | 파일 | 내용 | 상태 |
+|---|---|---|---|
+| 6.1 | `tests/factories/user_factory.py` | `make_user_dto()`, `make_create_user_dto()`, `make_update_user_dto()` | ✅ 완료 |
+| 6.2 | `tests/unit/user/domain/test_user_service.py` | Mock repo로 service 단위 테스트 | ✅ 완료 |
+| 6.3 | `tests/unit/user/application/test_user_use_case.py` | Mock service로 use case 단위 테스트 | ✅ 완료 |
+| 6.4 | `tests/integration/user/infrastructure/test_user_repository.py` | 실제 DB CRUD 테스트 (aiosqlite) | ✅ 완료 |
+| 6.5 | `tests/e2e/user/test_user_router.py` | HTTP 엔드포인트 전체 테스트 | ✅ 완료 |
 
 ### Phase 7: 문서화
 
-| 단계 | 작업 |
-|---|---|
-| 7.1 | `skill.md` 삭제 |
-| 7.2 | `AIDD.md` 신규 작성 (새 아키텍처 AI 가이드) |
+| 단계 | 작업 | 상태 |
+|---|---|---|
+| 7.1 | `skill.md` 삭제 (이미 없었음) | ✅ 완료 |
+| 7.2 | `AIDD.md` 신규 작성 (새 아키텍처 AI 가이드) | ✅ 완료 |
+| 7.3 | `CLAUDE.md` 신규 작성 (Claude 자동화 규칙) | ✅ 완료 |
+| 7.4 | `.pre-commit-config.yaml` 아키텍처 위반 훅 4개 추가 | ✅ 완료 |
 
 ---
 
@@ -621,3 +623,166 @@ Phase 2 (Base 클래스 정리) 작업을 진행해줘.
 - Domain 레이어에서 Infrastructure import
 - Model 객체를 Repository 밖으로 노출
 - Mapper 클래스 별도 생성 (인라인 변환으로 충분)
+
+---
+
+## 14. AIDD 방법론: AI 개발 관리 체계
+
+> **AIDD (AI-Driven Development)**: Claude + Serena MCP를 중심으로 코드 탐색은 의미기반, 아키텍처 강제화는 grep+CI로 분리하는 AI 협업 개발 방법론
+
+### 14.1 도구 역할 분리
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  개발 중 (Claude 세션)                                   │
+│  Serena MCP  → 의미기반 탐색, 코드 이해, 영향 분석      │
+│  CLAUDE.md   → 세션 시작 시 항상 로드되는 핵심 규칙     │
+│  Serena memories → 살아있는 프로젝트 지식 (동적 갱신)   │
+├─────────────────────────────────────────────────────────┤
+│  커밋 전 (pre-commit hook)                               │
+│  grep 패턴  → 아키텍처 위반 강제 차단                   │
+│  flake8/black/isort → 코드 품질 자동 보정               │
+└─────────────────────────────────────────────────────────┘
+```
+
+### 14.2 Serena 의미기반 탐색 — 개발 중 사용
+
+**언제 쓰나:** 코드를 이해하거나 변경 영향을 분석할 때
+
+```
+# 리팩토링 전: UserEntity를 사용하는 모든 심볼 파악
+find_referencing_symbols("UserEntity")
+→ 상속, 타입힌트, 파라미터, 리턴타입 등 의미 단위로 추적
+
+# 새 도메인 추가 전: BaseService 구조 파악
+find_symbol("BaseService", include_body=True)
+
+# 계층 간 의존관계 파악
+find_referencing_symbols("BaseRepository")
+→ 어느 Service가 직접 참조하는지 확인
+```
+
+**Serena memories 구조 (4개 유지):**
+
+| 메모리 | 역할 | 갱신 시점 |
+|---|---|---|
+| `project_overview` | 스택, 4계층 구조, 진입점 | 스택 변경 시 |
+| `architecture_conventions` | DO/DON'T, 데이터 흐름 | 아키텍처 결정 변경 시 |
+| `refactoring_status` | 현재 Phase 진행 상태 | Phase 완료 시마다 |
+| `suggested_commands` | 검증 커맨드 모음 | 새 커맨드 추가 시 |
+
+### 14.3 grep + pre-commit — 아키텍처 위반 강제화
+
+**언제 쓰나:** 잘못된 패턴이 코드베이스에 들어오는 것을 자동 차단할 때
+
+`.pre-commit-config.yaml`에 아키텍처 검사 훅 추가:
+
+```yaml
+# ==================== STAGE: COMMIT (아키텍처 위반 검사) ====================
+- repo: local
+  hooks:
+    # Domain 레이어에서 Infrastructure import 금지
+    - id: no-domain-infra-import
+      name: "Domain → Infrastructure import 금지"
+      language: pygrep
+      entry: "from src\\..*\\.infrastructure"
+      files: "src/.*/domain/.*\\.py$"
+      args: [--negate]
+
+    # Entity import 완전 제거 확인
+    - id: no-entity-import
+      name: "Entity import 금지 (DTO로 대체됨)"
+      language: pygrep
+      entry: "from src\\._core\\.domain\\.entities"
+      files: "\\.py$"
+      args: [--negate]
+
+    # to_entity / from_entity 메서드 사용 금지
+    - id: no-entity-methods
+      name: "to_entity/from_entity 메서드 금지"
+      language: pygrep
+      entry: "\\.to_entity\\(|\\.from_entity\\("
+      files: "\\.py$"
+      args: [--negate]
+
+    # 다중상속 패턴 금지 (BaseResponse + Entity)
+    - id: no-multiple-inheritance-response
+      name: "Response 다중상속 패턴 금지"
+      language: pygrep
+      entry: "class \\w+(Response|Request)\\(Base(Response|Request),\\s*\\w+(Entity|DTO)"
+      files: "\\.py$"
+      args: [--negate]
+```
+
+**수동 검증 커맨드 (Phase 완료 시 실행):**
+
+```bash
+# 1. Entity import 잔존 확인
+grep -r "from src._core.domain.entities" src/
+# → 결과 없어야 통과
+
+# 2. Domain → Infrastructure 계층 위반 확인
+grep -r "from src._core.infrastructure" src/_core/domain/
+grep -r "from src.*infrastructure" src/user/domain/
+# → 결과 없어야 통과
+
+# 3. 금지 메서드 잔존 확인
+grep -r "\.to_entity\|\.from_entity" src/
+# → 결과 없어야 통과
+
+# 4. 다중상속 패턴 잔존 확인
+grep -r "class.*Response.*BaseResponse.*Entity\|class.*Request.*BaseRequest.*Entity" src/
+# → 결과 없어야 통과
+```
+
+### 14.4 CLAUDE.md 역할
+
+세션 시작 시 항상 로드되는 **짧은 핵심 규칙**만 유지. 상세 내용은 Serena memories로.
+
+```markdown
+# 핵심 규칙 (절대 위반 금지)
+- Domain 레이어에서 Infrastructure import 금지
+- 다중상속 패턴(class Response(BaseResponse, Entity)) 금지
+- to_entity(), from_entity() 메서드 금지
+- Model 객체는 Repository 밖으로 노출 금지
+- 변환은 인라인으로: model_dump(), model_validate()
+
+# 작업 전 확인
+- refactoring_status 메모리로 현재 Phase 확인
+- architecture_conventions 메모리로 DO/DON'T 확인
+```
+
+### 14.5 Skills (선택적, 최소화)
+
+코드 탐색 없이 실행 가능한 **표준 반복 워크플로우**에만 추가:
+
+| Skill | 용도 |
+|---|---|
+| `/add-domain {name}` | 새 도메인 모듈 스캐폴딩 체크리스트 |
+| `/arch-check` | 위반 검사 grep 커맨드 목록 전개 |
+
+Serena가 코드 탐색을 담당하므로 Skills는 **체크리스트/가이드 전개** 역할만.
+
+### 14.6 개발 세션 워크플로우
+
+```
+1. 세션 시작
+   └─ CLAUDE.md 자동 로드 (핵심 규칙)
+   └─ "refactoring_status 메모리 확인해줘" → 현재 Phase 파악
+
+2. 코드 탐색/이해
+   └─ Serena: find_symbol, find_referencing_symbols, get_symbols_overview
+   └─ 파일 전체 읽기는 최후 수단 (Serena가 심볼 단위로 더 효율적)
+
+3. 코드 작성/수정
+   └─ architecture_conventions 메모리 기반으로 패턴 준수
+   └─ 인라인 변환, DTO 3종 세트, Protocol 사용
+
+4. 커밋 전
+   └─ pre-commit hook 자동 실행 (포맷팅 + 아키텍처 위반 검사)
+   └─ Phase 완료 시 수동 검증 커맨드 실행
+
+5. Phase 완료 시
+   └─ refactoring_status 메모리 업데이트
+   └─ AIDD_PLAN.md Phase 테이블 상태 업데이트
+```
