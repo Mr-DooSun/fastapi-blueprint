@@ -2,10 +2,13 @@
   "mcpServers": {
     "serena": {
       "command": "uvx",
-      "args": ["serena"],
-      "env": {
-        "SERENA_PROJECT_DIR": "."
-      }
+      "args": [
+        "--from", "git+https://github.com/oraios/serena",
+        "serena", "start-mcp-server",
+        "--context", "claude-code",
+        "--project", ".",
+        "--enable-web-dashboard", "false"
+      ]
     },
     "context7": {
       "command": "npx",
