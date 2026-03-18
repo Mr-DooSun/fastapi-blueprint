@@ -28,6 +28,7 @@
 - `/add-worker-task {domain} {task}` — 비동기 Taskiq 태스크 추가
 - `/add-cross-domain from:{a} to:{b}` — 도메인 간 의존성 연결
 - `/review-architecture {domain|all}` — 아키텍처 컴플라이언스 감사
+- `/security-review {domain|file|all}` — OWASP 기반 코드 보안 감사
 - `/test-domain {domain} [generate|run]` — 테스트 생성 또는 실행
 - `/fix-bug {description}` — 구조화된 버그 수정 워크플로우
 - `/sync-guidelines` — 설계 변경 후 가이드라인 동기화 점검
