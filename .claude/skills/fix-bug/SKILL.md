@@ -1,8 +1,10 @@
 ---
 name: fix-bug
+argument-hint: "bug description or issue number"
 description: |
   This skill should be used when the user asks to "버그 수정",
-  "fix bug", "이슈 해결", "에러 수정",
+  "fix bug", "이슈 해결", "에러 수정", "오류 수정", "문제 해결",
+  "debug", "troubleshoot", "에러 추적",
   or reports a specific bug or error that needs investigation and fixing.
 ---
 
@@ -17,7 +19,8 @@ description: |
 4. 재현 테스트가 없으면 먼저 작성 (red 상태 확인)
 
 ## Phase 2: 추적 (Trace)
-1. Serena `find_symbol`로 관련 코드 위치 파악
+1. Serena `refactoring_status` 메모리 읽기 — 현재 아키텍처 상태 확인
+2. Serena `find_symbol`로 관련 코드 위치 파악
 2. 호출 경로 추적: Router → UseCase → Service → Repository
 3. 변환 경계 점검:
    - Request → UseCase 전달 시 데이터 손실 없는지
@@ -29,11 +32,8 @@ description: |
 
 ## Phase 3: 수정 (Fix)
 1. 가장 낮은 레이어에서 수정 (domain > infrastructure 선호)
-2. 기존 패턴을 따라 수정 — 새로운 패턴 도입 금지
-3. CLAUDE.md 절대 금지 규칙 준수 확인:
-   - Domain에서 Infrastructure import 하지 않는지
-   - 다중상속 패턴 사용하지 않는지
-   - to_entity/from_entity 사용하지 않는지
+2. 기존 패턴을 따라 수정 — 새로운 패턴 도입 금지 (변환: **project-dna.md §6**, Router: **§9** 참조)
+3. CLAUDE.md 절대 금지 규칙 준수 확인
 
 ## Phase 4: 검증 (Verify)
 1. Phase 1에서 작성한 재현 테스트가 통과하는지 확인 (green)

@@ -1,5 +1,6 @@
 ---
 name: plan-feature
+argument-hint: feature description
 description: |
   This skill should be used when the user asks to "기능 설계", "기능 계획",
   "plan feature", "설계해줘", "기능 기획", "아키텍처 설계", "design feature",

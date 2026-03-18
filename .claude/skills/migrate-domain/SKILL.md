@@ -1,9 +1,12 @@
 ---
 name: migrate-domain
+argument-hint: "generate|upgrade|downgrade|status"
+disable-model-invocation: true
 description: |
   This skill should be used when the user asks to "마이그레이션 생성",
   "migration 만들어줘", "migrate domain", "DB 마이그레이션", "alembic revision",
-  or wants to create/apply database migrations.
+  "스키마 변경", "테이블 추가", "컬럼 추가", "DB 변경",
+  or wants to create, apply, or rollback database migrations.
 ---
 
 # Alembic 마이그레이션 관리
@@ -66,3 +69,8 @@ alembic history         # 전체 히스토리
 - `alembic.ini`의 `env` 값이 환경에 맞는지 확인 (local/dev/stg/prod)
 - **프로덕션 적용 시 반드시 백업 후 진행**
 - `migrations/versions/` 디렉토리가 없으면 첫 revision 시 자동 생성됨
+
+## upgrade/downgrade 후 검증
+1. `alembic current` — 적용된 revision 확인
+2. 도메인 통합 테스트 실행: `pytest tests/integration/{name}/ -v` (DB 스키마 일치 확인)
+3. 사용자에게 결과 보고

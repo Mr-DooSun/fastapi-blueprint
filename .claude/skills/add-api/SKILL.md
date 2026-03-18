@@ -1,5 +1,6 @@
 ---
 name: add-api
+argument-hint: "도메인에 METHOD /path 추가"
 description: |
   This skill should be used when the user asks to "API 추가",
   "엔드포인트 추가", "add endpoint", "라우터 추가",

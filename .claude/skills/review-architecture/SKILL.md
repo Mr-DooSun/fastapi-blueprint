@@ -1,5 +1,6 @@
 ---
 name: review-architecture
+argument-hint: domain_name or all
 description: |
   This skill should be used when the user asks to "아키텍처 리뷰",
   "아키텍처 검사", "review architecture", "컴플라이언스 감사",

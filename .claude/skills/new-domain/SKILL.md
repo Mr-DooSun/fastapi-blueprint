@@ -1,5 +1,6 @@
 ---
 name: new-domain
+argument-hint: domain_name
 description: |
   This skill should be used when the user asks to "새 도메인 추가",
   "create a new domain", "도메인 스캐폴딩", "도메인 만들어줘",
@@ -16,7 +17,7 @@ description: |
 ## 사전 확인
 1. `$ARGUMENTS`가 유효한 Python 식별자인지 확인 (소문자, 언더스코어 허용, 하이픈 금지)
 2. `src/$ARGUMENTS/` 디렉토리가 이미 존재하는지 확인 — 존재하면 중단
-3. Serena `architecture_conventions` 메모리를 읽어 현재 규칙 확인
+3. Serena `architecture_conventions` 메모리 읽기 — 객체 역할 및 데이터 흐름 확인
 4. 사용자에게 도메인의 **주요 필드**를 질문 (예: name, description, price 등)
 
 ## 스캐폴딩 절차
@@ -30,12 +31,8 @@ description: |
 
 총 26개 파일 생성 (빈 `__init__.py` 포함).
 
-## 절대 금지 규칙 (CLAUDE.md)
-- Domain 레이어에서 Infrastructure import 금지
-- 다중상속 패턴 금지 (class Response(BaseResponse, Entity))
-- to_entity(), from_entity() 메서드 사용 금지
-- Model 객체를 Repository 밖으로 노출 금지
-- 인라인 변환만 사용: model_dump(), model_validate()
+## 아키텍처 규칙
+CLAUDE.md의 "절대 금지 규칙" 및 "변환 패턴"을 준수한다.
 
 ## 완료 후 검증
 1. `python -c "from src.{name}.domain.dtos.{name}_dto import {Name}DTO; print('OK')"` — import 확인

@@ -1,8 +1,10 @@
 ---
 name: sync-guidelines
+disable-model-invocation: true
 description: |
   This skill should be used when the user asks to "가이드라인 동기화",
   "sync guidelines", "문서 점검", "스킬 업데이트 확인",
+  "project-dna 갱신", "패턴 동기화", "코드-문서 일치 확인",
   or after architecture changes to verify Skills/CLAUDE.md match the actual code.
 ---
 

@@ -1,9 +1,11 @@
 ---
 name: add-cross-domain
+argument-hint: "from:consumer to:provider"
 description: |
   This skill should be used when the user asks to "도메인 연결",
   "도메인 간 의존성", "cross-domain dependency", "도메인 의존성 추가",
-  or needs to wire one domain to depend on another domain's data.
+  "다른 도메인 참조", "도메인 간 연결", "Protocol 의존성",
+  or needs to wire one domain to depend on another domain's data via Protocol-based DIP.
 ---
 
 # 도메인 간 의존성 연결
@@ -13,8 +15,9 @@ description: |
 ## 분석
 
 1. consumer(소비자) 도메인과 provider(제공자) 도메인 파악
-2. consumer가 provider의 어떤 기능을 필요로 하는지 확인
-3. 양쪽 도메인의 현재 구조 탐색 (Serena `find_symbol` 사용)
+2. Serena `architecture_conventions` 메모리 읽기 — 객체 역할 및 데이터 흐름 확인
+3. consumer가 provider의 어떤 기능을 필요로 하는지 확인
+4. 양쪽 도메인의 현재 구조 탐색 (Serena `find_symbol` 사용)
 
 ## 핵심 규칙
 - consumer의 Service는 provider의 **Protocol**에만 의존 (구현체 직접 import 금지)

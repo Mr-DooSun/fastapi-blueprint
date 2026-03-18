@@ -1,9 +1,11 @@
 ---
 name: add-worker-task
+argument-hint: domain_name task_name
 description: |
   This skill should be used when the user asks to "태스크 추가",
   "워커 태스크", "비동기 작업 추가", "add worker task",
-  or wants to create a new Taskiq async task for a domain.
+  "background job", "async task", "queue task", "Taskiq 태스크",
+  or wants to create a new asynchronous background task for a domain.
 ---
 
 # 비동기 Worker 태스크 추가

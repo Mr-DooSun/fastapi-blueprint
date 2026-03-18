@@ -1,5 +1,6 @@
 ---
 name: security-review
+argument-hint: "domain_name, file_path, or all"
 description: |
   This skill should be used when the user asks to "보안 리뷰",
   "보안 검사", "security review", "보안 감사", "OWASP 검사",

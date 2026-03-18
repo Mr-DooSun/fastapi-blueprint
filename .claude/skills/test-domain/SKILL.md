@@ -1,9 +1,11 @@
 ---
 name: test-domain
+argument-hint: "domain_name generate|run"
 description: |
   This skill should be used when the user asks to "테스트 생성",
   "테스트 실행", "generate tests", "run tests for domain",
-  "테스트 만들어줘", or wants to create or run tests for a specific domain.
+  "테스트 만들어줘", "unit test", "integration test", "pytest 실행",
+  "테스트 코드 작성", or wants to create or run tests for a specific domain.
 ---
 
 # 도메인 테스트 생성/실행
@@ -40,3 +42,8 @@ pytest tests/unit/{name}/ tests/integration/{name}/ tests/e2e/{name}/ -v
 ```
 
 실패한 테스트가 있으면 원인을 분석하고 수정 방안을 제시한다.
+
+## Generate 후 검증
+1. 생성된 테스트 파일 import 확인: `python -c "from tests.unit.{name}.domain.test_{name}_service import *; print('OK')"`
+2. 테스트 실행: `pytest tests/unit/{name}/ tests/integration/{name}/ -v`
+3. pre-commit 실행: `pre-commit run --files tests/**/{name}/**/*.py`
