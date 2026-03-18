@@ -33,11 +33,16 @@ description: |
 
 ## 감사 실행 방법
 
-각 카테고리의 항목에 대해:
-1. Grep으로 패턴 검사 (`${CLAUDE_SKILL_DIR}/references/security-checklist.md`의 패턴 사용)
-2. 위양성(false positive) 필터링 — 테스트 코드, 주석, 설정 예시 제외
-3. 발견된 이슈에 구체적 파일/라인 정보 포함
-4. 심각도 표시: [CRITICAL], [HIGH], [MEDIUM], [LOW]
+체크리스트의 각 항목은 `[항상]` 또는 `[해당 시]`로 분류되어 있다:
+
+### 조건부 검사 절차
+1. `[항상]` 항목: 무조건 Grep 검사 실행
+2. `[해당 시]` 항목: 먼저 탐지 조건(해당 기능의 import/사용 여부)을 Grep으로 확인
+   - 기능 미사용 → `[SKIP]` 출력 후 건너뜀
+   - 기능 사용 중 → 상세 검사 진행
+3. 위양성(false positive) 필터링 — 테스트 코드, 주석, 설정 예시 제외
+4. 발견된 이슈에 구체적 파일/라인 정보 포함
+5. 심각도 표시: [CRITICAL], [HIGH], [MEDIUM], [LOW]
 
 ## 출력 형식
 
@@ -59,11 +64,12 @@ description: |
 ...
 
 === 요약 ===
-통과: XX/24 | 실패: XX/24
+통과: XX/24 | 실패: XX/24 | 건너뜀: XX/24
   - CRITICAL: X건
   - HIGH: X건
   - MEDIUM: X건
   - LOW: X건
+  - SKIP: X건 (해당 기능 미사용)
 ```
 
 ## 외부 도구 연동 (선택)
