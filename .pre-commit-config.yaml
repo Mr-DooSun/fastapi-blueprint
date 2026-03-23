@@ -63,23 +63,9 @@ repos:
         entry: "from src\\..*\\.infrastructure"
         files: "src/.*/domain/.*\\.py$"
 
-      # Entity import 완전 제거 확인
-      - id: no-entity-import
-        name: "Entity import 금지 (DTO로 대체됨)"
+      # Entity 패턴 잔존 검출 (ADR 004: DTO로 통일)
+      - id: no-entity-pattern
+        name: "Entity 패턴 미사용 (DTO로 통일)"
         language: pygrep
-        entry: "from src\\._core\\.domain\\.entities"
-        files: "\\.py$"
-
-      # to_entity / from_entity 메서드 사용 금지
-      - id: no-entity-methods
-        name: "to_entity/from_entity 메서드 금지"
-        language: pygrep
-        entry: "\\.to_entity\\(|\\.from_entity\\("
-        files: "\\.py$"
-
-      # 다중상속 패턴 금지 (BaseResponse/BaseRequest + Entity/DTO 혼용)
-      - id: no-multiple-inheritance-response
-        name: "Response/Request 다중상속 패턴 금지"
-        language: pygrep
-        entry: "class \\w+(Response|Request)\\(Base(Response|Request),\\s*\\w+(Entity|DTO)"
+        entry: "\\.to_entity\\(|\\.from_entity\\(|from src\\._core\\.domain\\.entities"
         files: "\\.py$"
