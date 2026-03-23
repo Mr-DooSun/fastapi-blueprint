@@ -20,6 +20,7 @@
 | [010](010-code-quality-tools.md) | 코드 품질 도구 체계화 | Superseded by 012 | Done | 2025-10 |
 | [011](011-3tier-hybrid-architecture.md) | 3-Tier 하이브리드 아키텍처 전환 | Accepted | Done | 2026-03-23 |
 | [012](012-ruff-migration.md) | pre-commit 린팅 도구 Ruff 통합 | Accepted | Done | 2026-03-23 |
+| [013](013-why-ioc-container.md) | 상속 대신 IoC Container를 선택한 이유 | Accepted | Done | 2026-03-23 |
 
 ## 미래 고려 사항 (Open Issues)
 
