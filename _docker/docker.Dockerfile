@@ -1,6 +1,6 @@
-FROM python:3.12.8-slim-bullseye
+FROM python:3.12-slim-bookworm
 
-ARG ENV
+ARG ENV=prod
 
 WORKDIR /app
 
@@ -8,17 +8,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install poetry
-COPY pyproject.toml /app/pyproject.toml
-RUN poetry config virtualenvs.create false \
-    && poetry install --no-root --no-interaction
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
-COPY src/server /app/src/server
-COPY src/core /app/src/core
+COPY pyproject.toml uv.lock /app/
+RUN uv sync --no-dev --frozen
+
+COPY src/ /app/src/
 COPY _env/${ENV}.env /app/.env
-
-
 
 EXPOSE 8000
 
-CMD ["poetry", "run", "uvicorn", "src.server.app:app", "--workers", "1", "--host", "0.0.0.0", "--port", "8000", "--env-file", ".env"]
+CMD ["uv", "run", "uvicorn", "src._apps.server.app:app", "--workers", "1", "--host", "0.0.0.0", "--port", "8000", "--env-file", ".env"]
