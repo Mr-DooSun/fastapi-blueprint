@@ -46,6 +46,16 @@ jobs:
         run: uv sync --group dev
 
       - name: Run tests
+        env:
+          ENV: test
+          DATABASE_USER: postgres
+          DATABASE_PASSWORD: postgres
+          DATABASE_HOST: 127.0.0.1
+          DATABASE_PORT: "5432"
+          DATABASE_NAME: postgres
+          AWS_SQS_ACCESS_KEY: test
+          AWS_SQS_SECRET_KEY: test
+          AWS_SQS_URL: http://localhost:4566
         run: uv run pytest tests/ -v --tb=short
 
   architecture:
