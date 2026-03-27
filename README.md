@@ -14,6 +14,7 @@
   <a href="https://fastapi.tiangolo.com"><img src="https://img.shields.io/badge/FastAPI-0.115+-green.svg" alt="FastAPI"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License"></a>
   <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff"></a>
+  <a href="https://github.com/Mr-DooSun/fastapi-blueprint/stargazers"><img src="https://img.shields.io/github/stars/Mr-DooSun/fastapi-blueprint?style=social" alt="GitHub Stars"></a>
 </p>
 
 <p align="center">
@@ -436,7 +437,7 @@ Every technical choice in this project is documented as an ADR (Architecture Dec
 - [ ] Structured logging (structlog)
 - [ ] FastMCP interface
 - [ ] Reflex Admin dashboard
-- [ ] Health check endpoint
+- [x] Health check endpoint
 - [ ] One-click deploy (Railway / Render)
 - [ ] MkDocs documentation site
 
@@ -453,3 +454,15 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, coding guidelines,
 ## License
 
 [MIT License](LICENSE) -- Free for commercial use, modification, and distribution.
+
+---
+
+## Star History
+
+<a href="https://star-history.com/#Mr-DooSun/fastapi-blueprint&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Mr-DooSun/fastapi-blueprint&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Mr-DooSun/fastapi-blueprint&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Mr-DooSun/fastapi-blueprint&type=Date" width="600" />
+ </picture>
+</a>
