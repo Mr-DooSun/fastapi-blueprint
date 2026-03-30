@@ -19,8 +19,8 @@ class ExceptionMiddleware(BaseHTTPMiddleware):
             content = jsonable_encoder(
                 ErrorResponse(
                     message=f"Custom Exception: {exc.message}",
-                    error_code=getattr(exc, "code", "CUSTOM_ERROR"),
-                    error_details=getattr(exc, "details", None),
+                    error_code=exc.error_code,
+                    error_details=exc.details,
                 )
             )
             return JSONResponse(status_code=exc.status_code, content=content)
