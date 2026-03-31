@@ -2,7 +2,7 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from urllib.parse import quote_plus
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
@@ -109,3 +109,16 @@ class Database:
     async def dispose(self) -> None:
         await self.async_engine.dispose()
         self.engine.dispose()
+
+    async def check_connection(self) -> bool:
+        try:
+            async with self.async_engine.connect() as conn:
+                await conn.execute(text("SELECT 1"))
+                return True
+        except Exception as e:
+            raise DatabaseException(
+                status_code=503,
+                message="Database health check failed",
+                error_code="DATABASE_UNHEALTHY",
+                details={"original_error": str(e)},
+            )

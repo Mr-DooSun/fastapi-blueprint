@@ -1,6 +1,5 @@
 from dependency_injector import containers, providers
 
-from src._core.application.services.health_service import HealthService
 from src._core.config import settings
 from src._core.infrastructure.database.config import DatabaseConfig
 from src._core.infrastructure.database.database import Database
@@ -29,15 +28,6 @@ class CoreContainer(containers.DeclarativeContainer):
         database_port=settings.database_port,
         database_name=settings.database_name,
         config=db_config,
-    )
-
-    #########################################################
-    # Health Check
-    #########################################################
-
-    health_service = providers.Factory(
-        HealthService,
-        database=database,
     )
 
     #########################################################
