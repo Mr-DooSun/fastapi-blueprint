@@ -12,6 +12,9 @@
 - [ ] docs: Documentation
 - [ ] chore: Build/tooling
 - [ ] test: Tests
+- [ ] ci: CI/CD
+- [ ] perf: Performance
+- [ ] style: Code style
 
 ## Checklist
 - [ ] Architecture rules followed (no Domain -> Infrastructure imports)

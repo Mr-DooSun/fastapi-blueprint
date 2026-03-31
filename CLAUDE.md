@@ -66,6 +66,8 @@ All proposals and designs must consider scalability, maintainability, and team c
 - `/security-review {domain|file|all}` — OWASP-based code security audit
 - `/test-domain {domain} [generate|run]` — Generate or run tests
 - `/fix-bug {description}` — Structured bug-fix workflow
+- `/create-pr` — PR creation (branch validation → commit analysis → template-based PR)
+- `/review-pr {number|URL}` — Architecture-aware PR review (existing rules applied to PR diff)
 - `/sync-guidelines` — Synchronize guidelines after design changes + regenerate project-dna.md
 - `/migrate-domain {generate|upgrade|downgrade|status}` — Alembic migration management
 - `/onboard` — Interactive onboarding for new members (project structure → rules → workflow)
@@ -100,4 +102,5 @@ All proposals and designs must consider scalability, maintainability, and team c
 - Domain creation/API addition/tests/etc.: Skills (`/new-domain`, `/add-api`, etc.)
 
 ### Library Documentation
-- Check latest docs via context7 (SQLAlchemy 2.0, Pydantic 2.x, Taskiq, etc.)
+- **Proactively** use context7 whenever looking up library/framework/tool docs — do not wait for user to request it
+- Applies to: API syntax, configuration, version migration, conventions (SQLAlchemy 2.0, Pydantic 2.x, Taskiq, Conventional Commits, etc.)

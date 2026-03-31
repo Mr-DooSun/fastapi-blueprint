@@ -30,6 +30,7 @@ uv sync --group dev
 
 # Install pre-commit hooks
 uv run pre-commit install
+uv run pre-commit install --hook-type commit-msg
 
 # Set up environment variables
 cp _env/local.env.example _env/local.env
@@ -101,6 +102,9 @@ This project was migrated from a private repository. Issue numbers in early comm
 
 ## Commit Convention
 
+Format: `type: description` or `type(scope): description`
+Issue reference (optional): `type: description (#N)`
+
 ```
 feat: new feature
 fix: bug fix
@@ -108,7 +112,13 @@ refactor: code restructuring
 docs: documentation changes
 chore: build/tooling changes
 test: test additions or changes
+ci: CI/CD changes
+perf: performance improvement
+style: code style (formatting, whitespace)
+i18n: internationalization
 ```
+
+This is enforced by a pre-commit hook (`commitlint`). Invalid messages will be rejected.
 
 ## Pull Request Process
 

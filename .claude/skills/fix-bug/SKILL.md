@@ -46,7 +46,7 @@ Bug description: $ARGUMENTS
    ```
 
 ## Phase 5: Commit
-Commit convention: `[#{issue}] {type}: {description}`
+Commit convention: `{type}: {description} (#{issue})`
 
 Types:
 - `fix` — bug fix
@@ -55,5 +55,7 @@ Types:
 - `test` — add/modify tests
 - `docs` — documentation
 - `chore` — miscellaneous
+
+If no related issue exists, omit the issue reference: `{type}: {description}`
 
 Propose a commit message to the user and commit after confirmation.
