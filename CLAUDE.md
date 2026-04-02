@@ -40,6 +40,10 @@ All proposals and designs must consider scalability, maintainability, and team c
   3. Serena memories (architecture_conventions, etc.)
   4. When delegating to agents, explicitly pass the list of changed files
 
+## Security Principles
+- Do not expose internal details (traceback, DB schema, query) in production error responses
+- Prevent OWASP Top 10 violations when writing code (detailed checklist: `/security-review`)
+
 ## Conversion Patterns
 ### Write Direction (Request → DB)
 - Router → Service: `entity=item` (pass Request directly)
@@ -58,7 +62,7 @@ All proposals and designs must consider scalability, maintainability, and team c
 
 ## Skills (slash commands)
 - `/plan-feature {description}` — Feature implementation planning (requirements interview → architecture analysis → security check → task decomposition)
-- `/new-domain {name}` — Full domain scaffolding (21 source + 4 test files)
+- `/new-domain {name}` — Full domain scaffolding (14 content + 22 `__init__.py` + 3 tests = 39 files)
 - `/add-api {description}` — Add API endpoint to existing domain
 - `/add-worker-task {domain} {task}` — Add async Taskiq task
 - `/add-cross-domain from:{a} to:{b}` — Wire cross-domain dependency

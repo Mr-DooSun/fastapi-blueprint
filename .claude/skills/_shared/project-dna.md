@@ -262,7 +262,7 @@ def create_server_container() -> containers.DynamicContainer:
 
 - PreToolUse (pre-tool-security): SQL injection, hardcoded secrets, Domain→Infra import, sensitive data logging check
 - PostToolUse (post-tool-sync-warning): Recommends running /sync-guidelines when core files (_core/, pyproject.toml, .pre-commit-config.yaml, .serena/memories/, .claude/skills/_shared/, .claude/hooks/) are modified
-- Stop: Warns before session end if /sync-guidelines not run after core file changes
+- Stop (stop-sync-reminder): Warns before turn ends if core files were modified during the session but /sync-guidelines was not run
 
 ## §8. Active Features
 

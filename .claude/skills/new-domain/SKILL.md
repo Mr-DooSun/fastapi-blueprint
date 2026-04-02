@@ -29,7 +29,7 @@ Refer to `${CLAUDE_SKILL_DIR}/references/scaffolding-layers.md` for the detailed
 
 **Layer order**: Domain -> Application -> Infrastructure -> Interface -> App Wiring -> Tests
 
-Total 26 files created (including empty `__init__.py` files).
+Default 39 files (14 content + 22 `__init__.py` + 3 tests), with UseCase 43 files.
 
 ## Architecture Rules
 Follow the "Absolute Prohibitions" and "Conversion Patterns" from CLAUDE.md.

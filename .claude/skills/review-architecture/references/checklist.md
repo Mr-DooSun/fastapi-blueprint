@@ -41,7 +41,7 @@ Check tests/ directory:
 
 - [ ] `tests/factories/{name}_factory.py` exists
 - [ ] `tests/unit/{name}/domain/test_{name}_service.py` exists
-- [ ] `tests/unit/{name}/application/test_{name}_use_case.py` exists
+- [ ] `tests/unit/{name}/application/test_{name}_use_case.py` exists **(only when UseCase exists)**
 - [ ] `tests/integration/{name}/infrastructure/test_{name}_repository.py` exists
 
 ## 6. Bootstrap Wiring

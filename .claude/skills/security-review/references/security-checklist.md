@@ -121,7 +121,7 @@ Check configuration files and pyproject.toml:
 
 ### CORS Configuration
 - [ ] [Always][HIGH] `allow_origins=["*"]` not used in production
-  - Verify `allow_origins` in config.py branches on `is_dev` condition
+  - Verify `allow_origins` in Settings class or bootstrap uses environment-driven values (not hardcoded `["*"]`)
 - [ ] [Always][MEDIUM] Review scope of `allow_methods=["*"]`, `allow_headers=["*"]`
 
 ### Secret Management

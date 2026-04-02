@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # PostToolUse Hook: Recommend running /sync-guidelines when project foundation files change
+# Sets a flag file so the Stop hook can issue a final reminder.
 # Always exit 0 (PostToolUse cannot block, warning only)
 
+SYNC_FLAG="/tmp/.claude-sync-pending"
 INPUT=$(cat)
 
 # Extract file_path from tool_input JSON
@@ -18,6 +20,9 @@ if echo "$FILE_PATH" | grep -qE '(src/_core/|pyproject\.toml|\.pre-commit-config
     echo "A project foundation file has been modified. Running /sync-guidelines is recommended."
     echo "  Changed file: $FILE_PATH"
     echo "  Impact: Patterns in project-dna.md and Skills may become outdated."
+
+    # Set flag for Stop hook
+    echo "$FILE_PATH" >> "$SYNC_FLAG"
 fi
 
 exit 0

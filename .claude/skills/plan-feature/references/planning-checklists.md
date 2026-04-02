@@ -76,7 +76,7 @@
 
 | Task Type | Mapped Skill | Argument Format | Notes |
 |-----------|-------------|-----------------|-------|
-| New domain creation | `/new-domain` | `{name}` | Auto-generates 21 source + 4 test files |
+| New domain creation | `/new-domain` | `{name}` | Default 39 files (14 content + 22 `__init__.py` + 3 tests) |
 | CRUD API addition | `/add-api` | `"add {METHOD} /{path} to {domain}"` | Bottom-up implementation |
 | Custom API addition | `/add-api` | `"{description}"` | Supervision Level required when business logic is included |
 | Async task | `/add-worker-task` | `{domain} {task_name}` | Add UseCase method first if needed |
