@@ -2,25 +2,25 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo-dark.png">
     <source media="(prefers-color-scheme: light)" srcset="docs/assets/logo-light.png">
-    <img alt="FastAPI Blueprint" src="docs/assets/logo-light.png" width="200">
+    <img alt="FastAPI Agent Blueprint" src="docs/assets/logo-light.png" width="200">
   </picture>
 </p>
 
-<h1 align="center">FastAPI Blueprint</h1>
+<h1 align="center">FastAPI Agent Blueprint</h1>
 
 <p align="center">
-  <a href="https://github.com/Mr-DooSun/fastapi-blueprint/actions/workflows/ci.yml"><img src="https://github.com/Mr-DooSun/fastapi-blueprint/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/Mr-DooSun/fastapi-agent-blueprint/actions/workflows/ci.yml"><img src="https://github.com/Mr-DooSun/fastapi-agent-blueprint/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/Python-3.12.9+-blue.svg" alt="Python"></a>
   <a href="https://fastapi.tiangolo.com"><img src="https://img.shields.io/badge/FastAPI-0.115+-green.svg" alt="FastAPI"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License"></a>
   <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff"></a>
-  <a href="https://github.com/Mr-DooSun/fastapi-blueprint/stargazers"><img src="https://img.shields.io/github/stars/Mr-DooSun/fastapi-blueprint?style=social" alt="GitHub Stars"></a>
+  <a href="https://github.com/Mr-DooSun/fastapi-agent-blueprint/stargazers"><img src="https://img.shields.io/github/stars/Mr-DooSun/fastapi-agent-blueprint?style=social" alt="GitHub Stars"></a>
 </p>
 
 <p align="center">
-  <b>Production-ready FastAPI backend blueprint.</b><br>
-  Inherit one base class, get 7 CRUD endpoints. Add a domain, it registers itself.<br>
-  Designed for teams of 5+ developers managing 10+ domains.
+  <b>AI Agent Backend Platform on FastAPI.</b><br>
+  MCP server + AI orchestration + async DDD — from CRUD to agent tools in one codebase.<br>
+  Build AI-powered backends that serve both users and agents.
 </p>
 
 <p align="center">
@@ -35,18 +35,59 @@
 
 ## Key Features
 
-- **Zero-boilerplate CRUD** -- Inherit `BaseRepository[DTO]` + `BaseService[DTO]`, get 7 async CRUD methods instantly
-- **Auto domain discovery** -- Add a domain folder, it auto-registers. No container or bootstrap changes needed
-- **4 interface types** -- HTTP API (FastAPI) + Async Worker (Taskiq) + Admin UI (SQLAdmin) + MCP Server (planned)
-- **Architecture enforcement** -- Pre-commit hooks block `Domain -> Infrastructure` imports at commit time
-- **Type-safe generics** -- `BaseRepository[ProductDTO]`, `BaseService[ProductDTO]`, `SuccessResponse[ProductResponse]`
-- **DDD layered structure** -- Each domain is fully independent with its own layers (Domain / Infrastructure / Interface / Application)
-- **12 AI development skills** -- Claude Code slash commands for scaffolding, testing, architecture review, and more
-- **14 Architecture Decision Records** -- Every major design choice documented with rationale
+### AI Agent Platform
+
+- **MCP Server interface** `planned` — Expose domain services as AI agent tools via FastMCP
+- **AI agent orchestration** `planned` — PydanticAI integration for structured LLM workflows
+- **Vector search** `planned` — pgvector for semantic search, RAG, and similarity matching
+
+### Production-Ready Architecture
+
+- **4 interface types** — HTTP API (FastAPI) + Async Worker (Taskiq) + Admin UI (SQLAdmin) + MCP Server (planned)
+- **Zero-boilerplate CRUD** — Inherit `BaseRepository[DTO]` + `BaseService[DTO]`, get 7 async CRUD methods instantly
+- **Auto domain discovery** — Add a domain folder, it auto-registers. No container or bootstrap changes needed
+- **Async-first** — Genuine async from DB (asyncpg) to HTTP (aiohttp) to task queue (Taskiq)
+
+### Developer Experience
+
+- **14 AI development skills** — Claude Code slash commands for scaffolding, testing, architecture review, and more
+- **Architecture enforcement** — Pre-commit hooks block `Domain -> Infrastructure` imports at commit time
+- **Type-safe generics** — `BaseRepository[ProductDTO]`, `BaseService[ProductDTO]`, `SuccessResponse[ProductResponse]`
+- **DDD layered structure** — Each domain is fully independent with its own layers (Domain / Infrastructure / Interface / Application)
+- **14 Architecture Decision Records** — Every major design choice documented with rationale
 
 ---
 
 ## Why?
+
+### Your domain logic — accessible everywhere
+
+Write business logic once. Expose it as a REST API, background job, admin view, or AI agent tool.
+
+```python
+# 1. Define your service
+class DocumentService(BaseService[DocumentDTO]):
+    async def analyze(self, document_id: int) -> AnalysisDTO:
+        ...  # your business logic
+
+# 2. REST API — for your frontend
+@router.post("/documents/{document_id}/analyze")
+async def analyze_document(document_id: int, service=Depends(...)):
+    return await service.analyze(document_id)
+
+# 3. MCP Tool — for AI agents (planned)
+@mcp.tool()
+async def analyze_document(document_id: int) -> AnalysisResult:
+    return await document_service.analyze(document_id)
+
+# 4. Background job — for batch processing
+@broker.task()
+async def batch_analyze(project_id: int):
+    for doc in await service.get_by_project(project_id):
+        await service.analyze(doc.id)
+```
+
+### Zero-boilerplate CRUD
 
 ```python
 # Before: Repeat the same CRUD for every domain
@@ -96,7 +137,7 @@ Router -> UseCase -> Service -> Repository -> DB
 
 | Layer | Role | Base Class |
 |-------|------|-----------|
-| **Interface** | Router, Request/Response, Admin, Worker Task | - |
+| **Interface** | Router, Request/Response, Admin, Worker Task, MCP Tool | - |
 | **Domain** | Service (business logic), Protocol, DTO, Event | `BaseService[ReturnDTO]` |
 | **Infrastructure** | Repository (DB access), Model, DI Container | `BaseRepository[ReturnDTO]` |
 | **Application** | UseCase (orchestration) -- **optional** | - |
@@ -135,7 +176,7 @@ The `/onboard` skill adapts to your experience:
 - **Intermediate**: Focuses on this project's specific patterns
 - **Advanced**: Jumps straight to architecture rules and conventions
 
-### 12 Built-in Skills
+### 14 Built-in Skills
 
 | Command | What it does |
 |---------|------------|
@@ -149,6 +190,8 @@ The `/onboard` skill adapts to your experience:
 | `/security-review {domain}` | OWASP-based security audit |
 | `/test-domain {domain}` | Generate or run domain tests |
 | `/fix-bug {description}` | Structured bug fixing workflow |
+| `/create-pr` | Branch validation -> commit analysis -> template-based PR |
+| `/review-pr {number}` | Architecture-aware PR review |
 | `/sync-guidelines` | Sync docs after design changes |
 | `/migrate-domain {command}` | Alembic migration management |
 
@@ -188,8 +231,8 @@ To use AIDD features, configure these MCP servers:
 
 ```bash
 # 1. Clone
-git clone https://github.com/Mr-DooSun/fastapi-blueprint.git
-cd fastapi-blueprint
+git clone https://github.com/Mr-DooSun/fastapi-agent-blueprint.git
+cd fastapi-agent-blueprint
 
 # 2. Setup (requires uv)
 make setup
@@ -307,18 +350,26 @@ Discovery conditions:
 
 Each domain can expose functionality through multiple interfaces:
 
-| Interface | Technology | Location | Purpose |
-|-----------|-----------|----------|---------|
-| **HTTP API** | FastAPI | `interface/server/` | REST API endpoints |
-| **Async Worker** | Taskiq + SQS | `interface/worker/` | Background task processing |
-| **Admin UI** | SQLAdmin | `interface/admin/` | Database management dashboard |
-| **MCP Server** | FastMCP | `interface/mcp/` | AI tool integration (planned) |
+| Interface | Technology | Status | Purpose |
+|-----------|-----------|--------|---------|
+| **HTTP API** | FastAPI | Stable | REST API endpoints |
+| **Async Worker** | Taskiq + SQS | Stable | Background task processing |
+| **Admin UI** | SQLAdmin | Stable | Database management dashboard |
+| **MCP Server** | FastMCP | Planned | AI agent tool interface |
 
 All interfaces share the same Domain and Infrastructure layers -- write your business logic once, expose it everywhere.
 
 ---
 
 ## Tech Stack
+
+### AI & Agent `planned`
+
+| Technology | Purpose |
+|-----------|---------|
+| **FastMCP** | MCP server — expose domain services as tools for AI agents |
+| **PydanticAI** | Structured LLM orchestration with Pydantic-native outputs |
+| **pgvector** | Vector similarity search (PostgreSQL extension) |
 
 ### Core
 
@@ -386,7 +437,7 @@ src/
 │   │   ├── repositories/        # UserRepository(BaseRepository[UserDTO])
 │   │   └── di/                  # UserContainer
 │   └── interface/
-│       ├── server/              # routers/, dtos/, bootstrap/
+│       ├── server/              # routers/, schemas/, bootstrap/
 │       ├── worker/              # tasks/, bootstrap/
 │       └── admin/               # SQLAdmin views
 │
@@ -399,14 +450,17 @@ src/
 
 ## Comparison
 
-| Feature | FastAPI Blueprint | [tiangolo/full-stack](https://github.com/fastapi/full-stack-fastapi-template) | [s3rius/template](https://github.com/s3rius/FastAPI-template) | [teamhide/boilerplate](https://github.com/teamhide/fastapi-boilerplate) |
+| Feature | FastAPI Agent Blueprint | [tiangolo/full-stack](https://github.com/fastapi/full-stack-fastapi-template) | [s3rius/template](https://github.com/s3rius/FastAPI-template) | [teamhide/boilerplate](https://github.com/teamhide/fastapi-boilerplate) |
 |---------|:-:|:-:|:-:|:-:|
+| MCP Server interface | **Planned** | No | No | No |
+| AI orchestration (PydanticAI) | **Planned** | No | No | No |
+| Vector search (pgvector) | **Planned** | No | No | No |
 | Zero-boilerplate CRUD (7 methods) | **Yes** | No | No | No |
 | Auto domain discovery | **Yes** | No | No | No |
 | Architecture enforcement (pre-commit) | **Yes** | No | No | No |
-| AI development skills | **12** | 0 | 0 | 0 |
+| AI development skills | **14** | 0 | 0 | 0 |
 | Adaptive onboarding (`/onboard`) | **Yes** | No | No | No |
-| Multi-interface (API+Worker+Admin) | **4 types** | 2 | 1 | 1 |
+| Multi-interface (API+Worker+Admin+MCP) | **4 types** | 2 | 1 | 1 |
 | Architecture Decision Records | **14** | 0 | 0 | 0 |
 | Type-safe generics across layers | **Yes** | Partial | Partial | No |
 | DI with IoC Container | **Yes** | No | No | No |
@@ -432,14 +486,31 @@ Every technical choice in this project is documented as an ADR (Architecture Dec
 
 ## Roadmap
 
-- [ ] JWT Authentication domain
-- [ ] Product example domain (cross-domain demo)
-- [ ] Structured logging (structlog)
-- [ ] FastMCP interface
-- [ ] Reflex Admin dashboard
+### Phase 1: AI Agent Foundation
+- [ ] FastMCP interface ([#18](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/18))
+- [ ] PydanticAI integration ([#15](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/15))
+- [ ] pgvector support ([#11](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/11))
+- [ ] JWT authentication ([#4](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/4))
+
+### Phase 2: Production Readiness
+- [ ] Structured logging — structlog ([#9](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/9))
+- [ ] Per-environment config ([#7](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/7), [#8](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/8), [#16](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/16))
+- [ ] Error notifications ([#17](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/17))
+- [ ] Worker payload schemas ([#37](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/37))
+- [ ] CRUD data validation ([#10](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/10))
+
+### Phase 3: Ecosystem
+- [ ] Test coverage expansion ([#2](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/2))
+- [ ] Performance testing — Locust ([#3](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/3))
+- [ ] Serverless deployment ([#6](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/6))
+- [ ] WebSocket documentation ([#1](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/1))
+- [ ] CHANGELOG ([#41](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/41))
+
+### Completed
 - [x] Health check endpoint
-- [ ] One-click deploy (Railway / Render)
-- [ ] MkDocs documentation site
+- [x] Auto domain discovery
+- [x] Architecture enforcement (pre-commit)
+- [x] 14 AI development skills
 
 Star this repo to follow our progress!
 
@@ -459,10 +530,10 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, coding guidelines,
 
 ## Star History
 
-<a href="https://star-history.com/#Mr-DooSun/fastapi-blueprint&Date">
+<a href="https://star-history.com/#Mr-DooSun/fastapi-agent-blueprint&Date">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Mr-DooSun/fastapi-blueprint&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Mr-DooSun/fastapi-blueprint&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Mr-DooSun/fastapi-blueprint&type=Date" width="600" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Mr-DooSun/fastapi-agent-blueprint&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Mr-DooSun/fastapi-agent-blueprint&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Mr-DooSun/fastapi-agent-blueprint&type=Date" width="600" />
  </picture>
 </a>
