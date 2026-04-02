@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from src._core.application.dtos.base_response import PaginationInfo
 from src.user.domain.dtos.user_dto import UserDTO
 from src.user.domain.services.user_service import UserService
-from src.user.interface.server.dtos.user_dto import UpdateUserRequest
+from src.user.interface.server.schemas.user_schema import UpdateUserRequest
 from tests.factories.user_factory import make_create_user_request, make_user_dto
 
 

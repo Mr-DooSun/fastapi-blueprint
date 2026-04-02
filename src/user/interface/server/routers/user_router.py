@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, Query
 from src._core.application.dtos.base_response import SuccessResponse
 from src.user.domain.services.user_service import UserService
 from src.user.infrastructure.di.user_container import UserContainer
-from src.user.interface.server.dtos.user_dto import (
+from src.user.interface.server.schemas.user_schema import (
     CreateUserRequest,
     UpdateUserRequest,
     UserResponse,

@@ -1,7 +1,7 @@
 import pytest
 
 from src.user.infrastructure.repositories.user_repository import UserRepository
-from src.user.interface.server.dtos.user_dto import UpdateUserRequest
+from src.user.interface.server.schemas.user_schema import UpdateUserRequest
 from tests.factories.user_factory import make_create_user_request
 
 

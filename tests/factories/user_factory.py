@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from src.user.domain.dtos.user_dto import UserDTO
-from src.user.interface.server.dtos.user_dto import CreateUserRequest, UpdateUserRequest
+from src.user.interface.server.schemas.user_schema import CreateUserRequest, UpdateUserRequest
 
 
 def make_user_dto(
