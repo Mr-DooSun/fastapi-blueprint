@@ -89,4 +89,4 @@ pip audit 2>/dev/null || uv pip audit 2>/dev/null || echo "audit tool not instal
 - PII exposure -> apply model_dump(exclude={'password', ...})
 - Hardcoded secrets -> migrate to Settings class (environment variables)
 - CORS wildcard -> restrict to specific origins in production
-- Stack trace exposure -> verify is_dev condition (ExceptionMiddleware pattern)
+- Stack trace exposure -> verify is_dev condition (generic_exception_handler in exception_handlers.py)

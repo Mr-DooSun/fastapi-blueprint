@@ -371,7 +371,7 @@ src/
 │   │   ├── di/                  # CoreContainer
 │   │   └── discovery.py         # Auto domain discovery
 │   ├── application/dtos/        # BaseRequest, BaseResponse, SuccessResponse
-│   ├── middleware/               # ExceptionMiddleware
+│   ├── exceptions/              # Exception handlers, BaseCustomException
 │   └── config.py                # Settings (pydantic-settings)
 │
 ├── user/                         # Example domain

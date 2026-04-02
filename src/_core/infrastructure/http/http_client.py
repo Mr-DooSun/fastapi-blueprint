@@ -3,7 +3,11 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 import aiohttp
-from fastapi import HTTPException
+
+from src._core.infrastructure.http.exceptions import (
+    ExternalServiceException,
+    ExternalServiceTimeoutException,
+)
 
 
 def get_http_client_config(env: str):
@@ -67,13 +71,9 @@ class HttpClient:
             session = await self._ensure_session()
             yield session
         except aiohttp.ClientError as e:
-            raise HTTPException(
-                status_code=502, detail=f"External service error: {str(e)}"
-            )
+            raise ExternalServiceException(message=f"External service error: {e}")
         except TimeoutError:
-            raise HTTPException(status_code=504, detail="External service timeout")
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"HTTP client error: {str(e)}")
+            raise ExternalServiceTimeoutException()
 
     async def dispose(self) -> None:
         if self._client_session and not self._client_session.closed:

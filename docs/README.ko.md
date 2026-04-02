@@ -370,7 +370,7 @@ src/
 │   │   ├── di/                  # CoreContainer
 │   │   └── discovery.py         # 도메인 자동 발견
 │   ├── application/dtos/        # BaseRequest, BaseResponse, SuccessResponse
-│   ├── middleware/               # ExceptionMiddleware
+│   ├── exceptions/              # Exception handlers, BaseCustomException
 │   └── config.py                # Settings (pydantic-settings)
 │
 ├── user/                         # 예시 도메인

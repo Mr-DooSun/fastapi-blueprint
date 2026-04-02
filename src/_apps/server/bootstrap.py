@@ -1,19 +1,30 @@
 import importlib
 
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from src._apps.server.di.container import create_server_container
 from src._core.application.routers.api import docs_router, health_check_router
 from src._core.config import settings
+from src._core.exceptions.base_exception import BaseCustomException
+from src._core.exceptions.exception_handlers import (
+    custom_exception_handler,
+    generic_exception_handler,
+    http_exception_handler,
+    validation_exception_handler,
+)
 from src._core.infrastructure.discovery import discover_domains
-from src._core.middleware.exception_middleware import ExceptionMiddleware
 
 
 def bootstrap_app(app: FastAPI) -> None:
-    # Middleware setup
-    app.add_middleware(ExceptionMiddleware)
+    # Exception handlers
+    app.add_exception_handler(RequestValidationError, validation_exception_handler)
+    app.add_exception_handler(StarletteHTTPException, http_exception_handler)
+    app.add_exception_handler(BaseCustomException, custom_exception_handler)
+    app.add_exception_handler(Exception, generic_exception_handler)
 
     # TrustedHostMiddleware setup
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.allowed_hosts)

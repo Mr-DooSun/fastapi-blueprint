@@ -138,7 +138,7 @@ Check middleware and exception handling files:
 
 ### Stack Trace Exposure
 - [ ] [Always][CRITICAL] Traceback not exposed in production
-  - Verify `is_dev` condition in ExceptionMiddleware
+  - Verify `is_dev` condition in `generic_exception_handler` (exception_handlers.py)
 - [ ] [Always][HIGH] Error responses do not expose internal implementation details
   - Grep: `traceback|stack_trace|__traceback__` return presence
 
