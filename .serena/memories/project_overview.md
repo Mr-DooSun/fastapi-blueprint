@@ -4,7 +4,7 @@
 > This memory only contains **project-level context** not covered in project-dna.md.
 
 ## Purpose
-FastAPI DDD-based modular layered architecture boilerplate
+AI Agent Backend Platform built on FastAPI with DDD modular layered architecture
 
 ## App Entrypoints
 - Server: `src/_apps/server/` — FastAPI (uvicorn)

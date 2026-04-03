@@ -1,7 +1,7 @@
-# FastAPI Layered Architecture — Claude Work Guide
+# FastAPI Agent Blueprint — Claude Work Guide
 
 ## Project Scale
-This project targets enterprise-grade services with 10+ domains and 5+ team members.
+This project is an AI Agent Backend Platform targeting enterprise-grade services with 10+ domains and 5+ team members.
 All proposals and designs must consider scalability, maintainability, and team collaboration at this scale.
 
 ## Pre-work Checklist

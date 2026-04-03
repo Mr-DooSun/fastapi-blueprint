@@ -1,5 +1,5 @@
 # the name by which the project can be referenced within Serena
-project_name: "fastapi-blueprint"
+project_name: "fastapi-agent-blueprint"
 
 
 # list of languages for which language servers are started; choose from:
@@ -123,7 +123,7 @@ default_modes:
 # initial prompt for the project. It will always be given to the LLM upon activating the project
 # (contrary to the memories, which are loaded on demand).
 initial_prompt: |
-  This project is a DDD-based modular layered architecture FastAPI backend template.
+  This project is an AI Agent Backend Platform built on FastAPI with DDD modular layered architecture.
   3-Tier hybrid: Router → Service(BaseService) → Repository(BaseRepository), UseCase is optional.
 
   Core rules:

@@ -2,14 +2,14 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png">
     <source media="(prefers-color-scheme: light)" srcset="assets/logo-light.png">
-    <img alt="FastAPI Blueprint" src="assets/logo-light.png" width="200">
+    <img alt="FastAPI Agent Blueprint" src="assets/logo-light.png" width="200">
   </picture>
 </p>
 
-<h1 align="center">FastAPI Blueprint</h1>
+<h1 align="center">FastAPI Agent Blueprint</h1>
 
 <p align="center">
-  <a href="https://github.com/Mr-DooSun/fastapi-blueprint/actions/workflows/ci.yml"><img src="https://github.com/Mr-DooSun/fastapi-blueprint/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/Mr-DooSun/fastapi-agent-blueprint/actions/workflows/ci.yml"><img src="https://github.com/Mr-DooSun/fastapi-agent-blueprint/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/Python-3.12.9+-blue.svg" alt="Python"></a>
   <a href="https://fastapi.tiangolo.com"><img src="https://img.shields.io/badge/FastAPI-0.115+-green.svg" alt="FastAPI"></a>
   <a href="../LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License"></a>
@@ -17,9 +17,9 @@
 </p>
 
 <p align="center">
-  <b>프로덕션 레디 FastAPI 백엔드 청사진.</b><br>
-  Base 클래스 상속 한 줄로 7개 CRUD 자동 제공. 새 도메인은 만들기만 하면 자동 등록.<br>
-  5명 이상의 개발자가 10개 이상의 도메인을 관리하는 팀을 위해 설계되었습니다.
+  <b>FastAPI 기반 AI 에이전트 백엔드 플랫폼.</b><br>
+  MCP 서버 + AI 오케스트레이션 + 비동기 DDD — CRUD부터 에이전트 도구까지 하나의 코드베이스로.<br>
+  사용자와 AI 에이전트 모두를 위한 백엔드를 구축하세요.
 </p>
 
 <p align="center">
@@ -34,18 +34,59 @@
 
 ## 주요 기능
 
-- **보일러플레이트 제로 CRUD** -- `BaseRepository[DTO]` + `BaseService[DTO]` 상속으로 7개 비동기 CRUD 메서드 즉시 제공
-- **도메인 자동 발견** -- 도메인 폴더를 추가하면 자동 등록. Container나 bootstrap 수정 불필요
-- **4가지 인터페이스** -- HTTP API (FastAPI) + 비동기 Worker (Taskiq) + Admin UI (SQLAdmin) + MCP Server (예정)
-- **아키텍처 자동 강제** -- Pre-commit hook이 커밋 시점에 `Domain -> Infrastructure` import를 차단
-- **타입 안전 제네릭** -- `BaseRepository[ProductDTO]`, `BaseService[ProductDTO]`, `SuccessResponse[ProductResponse]`
-- **DDD 레이어드 구조** -- 각 도메인이 완전히 독립된 계층 보유 (Domain / Infrastructure / Interface / Application)
-- **12개 AI 개발 스킬** -- 스캐폴딩, 테스트, 아키텍처 리뷰 등을 위한 Claude Code 슬래시 커맨드
-- **14개 Architecture Decision Records** -- 모든 주요 설계 결정을 근거와 함께 문서화
+### AI 에이전트 플랫폼
+
+- **MCP 서버 인터페이스** `planned` — FastMCP를 통해 도메인 서비스를 AI 에이전트 도구로 노출
+- **AI 에이전트 오케스트레이션** `planned` — 구조화된 LLM 워크플로우를 위한 PydanticAI 통합
+- **벡터 검색** `planned` — 시맨틱 검색, RAG, 유사도 매칭을 위한 pgvector
+
+### 프로덕션 레디 아키텍처
+
+- **4가지 인터페이스** — HTTP API (FastAPI) + 비동기 Worker (Taskiq) + Admin UI (SQLAdmin) + MCP Server (예정)
+- **보일러플레이트 제로 CRUD** — `BaseRepository[DTO]` + `BaseService[DTO]` 상속으로 7개 비동기 CRUD 메서드 즉시 제공
+- **도메인 자동 발견** — 도메인 폴더를 추가하면 자동 등록. Container나 bootstrap 수정 불필요
+- **비동기 우선** — DB(asyncpg)부터 HTTP(aiohttp), 태스크 큐(Taskiq)까지 진정한 async
+
+### 개발자 경험
+
+- **14개 AI 개발 스킬** — 스캐폴딩, 테스트, 아키텍처 리뷰 등을 위한 Claude Code 슬래시 커맨드
+- **아키텍처 자동 강제** — Pre-commit hook이 커밋 시점에 `Domain -> Infrastructure` import를 차단
+- **타입 안전 제네릭** — `BaseRepository[ProductDTO]`, `BaseService[ProductDTO]`, `SuccessResponse[ProductResponse]`
+- **DDD 레이어드 구조** — 각 도메인이 완전히 독립된 계층 보유 (Domain / Infrastructure / Interface / Application)
+- **14개 Architecture Decision Records** — 모든 주요 설계 결정을 근거와 함께 문서화
 
 ---
 
 ## Why?
+
+### 도메인 로직 — 어디서든 접근 가능
+
+비즈니스 로직을 한 번 작성하고, REST API, 백그라운드 작업, 어드민 뷰, AI 에이전트 도구로 노출하세요.
+
+```python
+# 1. 서비스 정의
+class DocumentService(BaseService[DocumentDTO]):
+    async def analyze(self, document_id: int) -> AnalysisDTO:
+        ...  # 비즈니스 로직
+
+# 2. REST API — 프론트엔드용
+@router.post("/documents/{document_id}/analyze")
+async def analyze_document(document_id: int, service=Depends(...)):
+    return await service.analyze(document_id)
+
+# 3. MCP 도구 — AI 에이전트용 (예정)
+@mcp.tool()
+async def analyze_document(document_id: int) -> AnalysisResult:
+    return await document_service.analyze(document_id)
+
+# 4. 백그라운드 작업 — 배치 처리용
+@broker.task()
+async def batch_analyze(project_id: int):
+    for doc in await service.get_by_project(project_id):
+        await service.analyze(doc.id)
+```
+
+### 보일러플레이트 제로 CRUD
 
 ```python
 # Before: 도메인마다 동일한 CRUD 반복
@@ -95,8 +136,8 @@ Router -> UseCase -> Service -> Repository -> DB
 
 | 계층 | 역할 | Base 클래스 |
 |------|------|------------|
-| **Interface** | Router, Request/Response, Admin, Worker Task | - |
-| **Domain** | Service (비즈니스 로직), Protocol, DTO | `BaseService[ReturnDTO]` |
+| **Interface** | Router, Request/Response, Admin, Worker Task, MCP Tool | - |
+| **Domain** | Service (비즈니스 로직), Protocol, DTO, Event | `BaseService[ReturnDTO]` |
 | **Infrastructure** | Repository (DB 접근), Model, DI Container | `BaseRepository[ReturnDTO]` |
 | **Application** | UseCase (복합 로직 조율) -- **선택적** | - |
 
@@ -134,7 +175,7 @@ Read:  Response <-- Service <-- Repository <-- DTO <-- Model
 - **중급**: 이 프로젝트 고유의 패턴에 집중
 - **고급**: 아키텍처 규칙과 컨벤션으로 바로 이동
 
-### 12개 내장 스킬
+### 14개 내장 스킬
 
 | 명령어 | 기능 |
 |--------|------|
@@ -148,6 +189,8 @@ Read:  Response <-- Service <-- Repository <-- DTO <-- Model
 | `/security-review {domain}` | OWASP 기반 보안 감사 |
 | `/test-domain {domain}` | 도메인 테스트 생성 또는 실행 |
 | `/fix-bug {description}` | 구조화된 버그 수정 워크플로우 |
+| `/create-pr` | 브랜치 검증 -> 커밋 분석 -> 템플릿 기반 PR |
+| `/review-pr {number}` | 아키텍처 인식 PR 리뷰 |
 | `/sync-guidelines` | 설계 변경 후 문서 동기화 |
 | `/migrate-domain {command}` | Alembic 마이그레이션 관리 |
 
@@ -187,8 +230,8 @@ AIDD 기능을 사용하려면 다음 MCP 서버를 설정하세요:
 
 ```bash
 # 1. Clone
-git clone https://github.com/Mr-DooSun/fastapi-blueprint.git
-cd fastapi-blueprint
+git clone https://github.com/Mr-DooSun/fastapi-agent-blueprint.git
+cd fastapi-agent-blueprint
 
 # 2. 셋업 (uv 필요)
 make setup
@@ -306,18 +349,26 @@ async def create_product(
 
 각 도메인은 여러 인터페이스를 통해 기능을 노출할 수 있습니다:
 
-| 인터페이스 | 기술 | 위치 | 용도 |
+| 인터페이스 | 기술 | 상태 | 용도 |
 |-----------|------|------|------|
-| **HTTP API** | FastAPI | `interface/server/` | REST API 엔드포인트 |
-| **비동기 Worker** | Taskiq + SQS | `interface/worker/` | 백그라운드 태스크 처리 |
-| **Admin UI** | SQLAdmin | `interface/admin/` | 데이터베이스 관리 대시보드 |
-| **MCP Server** | FastMCP | `interface/mcp/` | AI 도구 통합 (예정) |
+| **HTTP API** | FastAPI | Stable | REST API 엔드포인트 |
+| **비동기 Worker** | Taskiq + SQS | Stable | 백그라운드 태스크 처리 |
+| **Admin UI** | SQLAdmin | Stable | 데이터베이스 관리 대시보드 |
+| **MCP Server** | FastMCP | Planned | AI 에이전트 도구 인터페이스 |
 
 모든 인터페이스는 동일한 Domain/Infrastructure 계층을 공유합니다 -- 비즈니스 로직을 한 번 작성하고, 어디서든 노출하세요.
 
 ---
 
 ## Tech Stack
+
+### AI & Agent `planned`
+
+| 기술 | 용도 |
+|------|------|
+| **FastMCP** | MCP 서버 — 도메인 서비스를 AI 에이전트 도구로 노출 |
+| **PydanticAI** | Pydantic 네이티브 출력의 구조화된 LLM 오케스트레이션 |
+| **pgvector** | 벡터 유사도 검색 (PostgreSQL 확장) |
 
 ### Core
 
@@ -378,13 +429,14 @@ src/
 │   │   ├── dtos/                # UserDTO
 │   │   ├── protocols/           # UserRepositoryProtocol
 │   │   ├── services/            # UserService(BaseService[UserDTO])
-│   │   └── exceptions/          # UserNotFoundException
+│   │   ├── exceptions/          # UserNotFoundException
+│   │   └── events/              # UserCreated, UserUpdated
 │   ├── infrastructure/
 │   │   ├── database/models/     # UserModel
 │   │   ├── repositories/        # UserRepository(BaseRepository[UserDTO])
 │   │   └── di/                  # UserContainer
 │   └── interface/
-│       ├── server/              # routers/, dtos/, bootstrap/
+│       ├── server/              # routers/, schemas/, bootstrap/
 │       ├── worker/              # tasks/, bootstrap/
 │       └── admin/               # SQLAdmin views
 │
@@ -397,14 +449,17 @@ src/
 
 ## 비교
 
-| 기능 | FastAPI Blueprint | [tiangolo/full-stack](https://github.com/fastapi/full-stack-fastapi-template) | [s3rius/template](https://github.com/s3rius/FastAPI-template) | [teamhide/boilerplate](https://github.com/teamhide/fastapi-boilerplate) |
+| 기능 | FastAPI Agent Blueprint | [tiangolo/full-stack](https://github.com/fastapi/full-stack-fastapi-template) | [s3rius/template](https://github.com/s3rius/FastAPI-template) | [teamhide/boilerplate](https://github.com/teamhide/fastapi-boilerplate) |
 |------|:-:|:-:|:-:|:-:|
+| MCP 서버 인터페이스 | **Planned** | No | No | No |
+| AI 오케스트레이션 (PydanticAI) | **Planned** | No | No | No |
+| 벡터 검색 (pgvector) | **Planned** | No | No | No |
 | 보일러플레이트 제로 CRUD (7개 메서드) | **Yes** | No | No | No |
 | 도메인 자동 발견 | **Yes** | No | No | No |
 | 아키텍처 자동 강제 (pre-commit) | **Yes** | No | No | No |
-| AI 개발 스킬 | **12** | 0 | 0 | 0 |
+| AI 개발 스킬 | **14** | 0 | 0 | 0 |
 | 적응형 온보딩 (`/onboard`) | **Yes** | No | No | No |
-| 멀티 인터페이스 (API+Worker+Admin) | **4종** | 2 | 1 | 1 |
+| 멀티 인터페이스 (API+Worker+Admin+MCP) | **4종** | 2 | 1 | 1 |
 | Architecture Decision Records | **14** | 0 | 0 | 0 |
 | 전 계층 타입 안전 제네릭 | **Yes** | 부분 | 부분 | No |
 | IoC Container DI | **Yes** | No | No | No |
@@ -430,14 +485,31 @@ src/
 
 ## Roadmap
 
-- [ ] JWT 인증 도메인
-- [ ] Product 예시 도메인 (크로스 도메인 데모)
-- [ ] 구조화된 로깅 (structlog)
-- [ ] FastMCP 인터페이스
-- [ ] Reflex Admin 대시보드
-- [ ] 헬스 체크 엔드포인트
-- [ ] 원클릭 배포 (Railway / Render)
-- [ ] MkDocs 문서 사이트
+### Phase 1: AI Agent Foundation
+- [ ] FastMCP 인터페이스 ([#18](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/18))
+- [ ] PydanticAI 통합 ([#15](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/15))
+- [ ] pgvector 지원 ([#11](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/11))
+- [ ] JWT 인증 ([#4](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/4))
+
+### Phase 2: Production Readiness
+- [ ] 구조화된 로깅 — structlog ([#9](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/9))
+- [ ] 환경별 설정 분리 ([#7](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/7), [#8](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/8), [#16](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/16))
+- [ ] 에러 알림 ([#17](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/17))
+- [ ] 워커 페이로드 스키마 ([#37](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/37))
+- [ ] CRUD 데이터 검증 ([#10](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/10))
+
+### Phase 3: Ecosystem
+- [ ] 테스트 커버리지 확대 ([#2](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/2))
+- [ ] 성능 테스트 — Locust ([#3](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/3))
+- [ ] 서버리스 배포 ([#6](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/6))
+- [ ] WebSocket 문서 ([#1](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/1))
+- [ ] CHANGELOG ([#41](https://github.com/Mr-DooSun/fastapi-agent-blueprint/issues/41))
+
+### Completed
+- [x] 헬스 체크 엔드포인트
+- [x] 도메인 자동 발견
+- [x] 아키텍처 강제 (pre-commit)
+- [x] 14개 AI 개발 스킬
 
 스타를 눌러 진행 상황을 팔로우하세요!
 

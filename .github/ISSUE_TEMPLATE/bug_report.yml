@@ -44,7 +44,7 @@ body:
       placeholder: |
         - Python version: 3.12.x
         - OS: macOS / Linux / Windows
-        - fastapi-blueprint version: v0.1.0
+        - fastapi-agent-blueprint version: v0.1.0
     validations:
       required: false
 
